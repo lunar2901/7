@@ -209,6 +209,8 @@ function isNonEmptyString(x) { return typeof x === 'string' && x.trim().length >
 /* ========================= Card renderer ========================= */
 
 function createVerbCard(v, idx) {
+  injectVerbCardStylesOnce();
+
   const card = document.createElement('div');
   card.className = 'verb-card';
 
@@ -217,11 +219,53 @@ function createVerbCard(v, idx) {
   const typeText = getTypeText(v);
   const forms = getForms(v);
   const translations = getTranslations(v);
-  const examples = getExamples(v);
   const variants = getVariants(v);
 
-  // Show main derived forms from the verb (e.g. sein: bin, bist, ist...)
   const mainDerived = Array.isArray(v.derived) ? v.derived : [];
+
+  // Build varieties HTML (collapsible)
+  const varietiesHtml = (Array.isArray(variants) ? variants : []).map((vr) => {
+    if (typeof vr === 'string') {
+      return `
+        <details class="variety">
+          <summary><span>${escapeHtml(vr)}</span><span>▾</span></summary>
+        </details>
+      `;
+    }
+
+    const title = vr.variant || vr.name || vr.text || 'Usage';
+    const explanation = vr.explanation || '';
+    const prepsArr = Array.isArray(vr.prepositions) ? vr.prepositions : [];
+    const derivedArr = Array.isArray(vr.derived) ? vr.derived : [];
+    const exArr = Array.isArray(vr.examples)
+      ? vr.examples
+      : (vr.examples ? [String(vr.examples)] : []);
+
+    const metaBits = [];
+    if (prepsArr.length) metaBits.push(`<span class="meta-chip">Prep: ${escapeHtml(prepsArr.join(', '))}</span>`);
+    if (derivedArr.length) metaBits.push(`<span class="meta-chip">Derived: ${escapeHtml(derivedArr.join(' | '))}</span>`);
+
+    return `
+      <details class="variety">
+        <summary><span>${escapeHtml(title)}</span><span>▾</span></summary>
+
+        ${metaBits.length ? `<div class="variety-meta">${metaBits.join('')}</div>` : ''}
+
+        ${explanation ? `<div class="variety-expl">${escapeHtml(explanation)}</div>` : ''}
+
+        ${exArr.length ? `
+          <ul class="variety-examples">
+            ${exArr.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
+          </ul>` : ''}
+      </details>
+    `;
+  }).join('');
+
+  // If no varieties, optionally show general examples inside Usage tab (rare fallback)
+  const fallbackExamples = Array.isArray(v.examples) ? v.examples : [];
+  const fallbackUsageHtml = (!variants?.length && fallbackExamples.length)
+    ? `<div class="section-title">Examples</div><ul class="variety-examples">${fallbackExamples.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}</ul>`
+    : '';
 
   card.innerHTML = `
     <div class="verb-header">
@@ -229,6 +273,7 @@ function createVerbCard(v, idx) {
         <div class="verb-base">${escapeHtml(base)}</div>
         ${typeText ? `<div class="reflexive-marker">${escapeHtml(typeText)}</div>` : ''}
       </div>
+
       <button class="save-btn" type="button"
         data-save-id="${escapeHtml(saveId)}"
         data-save-label="${escapeHtml(base)}"
@@ -237,82 +282,64 @@ function createVerbCard(v, idx) {
         aria-label="Save">♡</button>
     </div>
 
-    <div class="verb-forms">
-      <div class="form-item"><span class="form-label">Present</span><span class="form-value">${escapeHtml(forms.present)}</span></div>
-      <div class="form-item"><span class="form-label">Past</span><span class="form-value">${escapeHtml(forms.past)}</span></div>
-      <div class="form-item" style="grid-column:1/-1;">
-        <span class="form-label">Partizip II${forms.aux ? ` (${escapeHtml(forms.aux)})` : ''}</span>
-        <span class="form-value">${escapeHtml(forms.partizip2)}</span>
-      </div>
-    </div>
-
     ${translations.length ? `
       <div class="verb-info">
-        <span class="label">Translation:</span>
+        <span class="label">Translation</span>
         <span class="value">${escapeHtml(translations.join(', '))}</span>
       </div>` : ''}
 
     ${mainDerived.length ? `
-      <div class="verb-info">
-        <span class="label">Derived:</span>
-        <span class="value">${escapeHtml(mainDerived.join(' | '))}</span>
+      <div class="pill-row">
+        ${mainDerived.map(x => `<span class="pill">${escapeHtml(x)}</span>`).join('')}
       </div>` : ''}
 
-    ${variants.length ? `
-      <div class="variants-section">
-        <h4>Varieties / Usages</h4>
+    <div class="tabbar">
+      <button type="button" class="tab-btn active" data-tab="forms">Forms</button>
+      <button type="button" class="tab-btn" data-tab="usage">Usage</button>
+    </div>
 
-        ${variants.map(vr => {
-          // Support both string variants and object variants
-          if (typeof vr === 'string') {
-            return `<div class="variant-block"><div class="variant-title">${escapeHtml(vr)}</div></div>`;
-          }
+    <div class="tab-panel" data-panel="forms">
+      <div class="verb-forms">
+        <div class="form-item">
+          <span class="form-label">Present</span>
+          <span class="form-value">${escapeHtml(forms.present)}</span>
+        </div>
+        <div class="form-item">
+          <span class="form-label">Past</span>
+          <span class="form-value">${escapeHtml(forms.past)}</span>
+        </div>
+        <div class="form-item" style="grid-column:1/-1;">
+          <span class="form-label">Partizip II${forms.aux ? ` (${escapeHtml(forms.aux)})` : ''}</span>
+          <span class="form-value">${escapeHtml(forms.partizip2)}</span>
+        </div>
+      </div>
+    </div>
 
-          const title = vr.variant || vr.name || vr.text || '';
-          const explanation = vr.explanation || '';
-          const prepsArr = Array.isArray(vr.prepositions) ? vr.prepositions : [];
-          const derivedArr = Array.isArray(vr.derived) ? vr.derived : [];
-          const exArr = Array.isArray(vr.examples) ? vr.examples : (vr.examples ? [String(vr.examples)] : []);
-
-          return `
-            <div class="variant-block">
-              ${title ? `<div class="variant-title">${escapeHtml(title)}</div>` : ''}
-
-              ${prepsArr.length ? `
-                <div class="variant-preps">
-                  <strong>Prepositions:</strong> ${escapeHtml(prepsArr.join(', '))}
-                </div>` : ''}
-
-              ${derivedArr.length ? `
-                <div class="variant-derived">
-                  <strong>Derived:</strong> ${escapeHtml(derivedArr.join(' | '))}
-                </div>` : ''}
-
-              ${explanation ? `
-                <div class="variant-explanation">
-                  ${escapeHtml(explanation)}
-                </div>` : ''}
-
-              ${exArr.length ? `
-                <ul class="variant-examples">
-                  ${exArr.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
-                </ul>` : ''}
-            </div>
-          `;
-        }).join('')}
-
-      </div>` : ''}
-
-    ${examples.length ? `
-      <div class="examples-section">
-        <h4>Examples</h4>
-        <ul class="examples-list">
-          ${examples.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
-        </ul>
-      </div>` : ''}
+    <div class="tab-panel" data-panel="usage" hidden>
+      <div class="section-title">Varieties</div>
+      ${varietiesHtml || `<div style="opacity:.7;font-weight:700;">No varieties listed for this verb yet.</div>`}
+      ${fallbackUsageHtml}
+    </div>
   `;
 
-  // Wire save button via SharedApp (unchanged from your current code)
+  // Tabs behavior
+  const tabBtns = card.querySelectorAll('.tab-btn');
+  const panels = {
+    forms: card.querySelector('[data-panel="forms"]'),
+    usage: card.querySelector('[data-panel="usage"]'),
+  };
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.dataset.tab;
+      panels.forms.hidden = target !== 'forms';
+      panels.usage.hidden = target !== 'usage';
+    });
+  });
+
+  // Wire save button via SharedApp (same as your current code)
   const btn = card.querySelector('.save-btn');
   if (btn) {
     setSaveBtnState(btn, getSaved().has(saveId));
@@ -328,6 +355,7 @@ function createVerbCard(v, idx) {
 
   return card;
 }
+
 
 
 /* ========================= Drawer ========================= */
@@ -368,6 +396,97 @@ function updateCounts() {
     const badge = document.getElementById(`count-${level}`);
     if (badge) badge.textContent = (verbsDB[level] || []).length;
   });
+}
+let __verbCardStylesInjected = false;
+
+function injectVerbCardStylesOnce() {
+  if (__verbCardStylesInjected) return;
+  __verbCardStylesInjected = true;
+
+  const css = `
+  .verb-card{
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:16px;
+    padding:14px;
+    background:#fff;
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+  }
+  .verb-header{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .verb-base{ font-size:22px; font-weight:800; letter-spacing:.2px; }
+  .reflexive-marker{ font-size:12px; opacity:.7; margin-top:2px; }
+  .verb-forms{ margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .form-item{ background:rgba(0,0,0,.03); border-radius:12px; padding:8px 10px; }
+  .form-label{ display:block; font-size:11px; opacity:.65; margin-bottom:2px; }
+  .form-value{ font-weight:700; }
+
+  .verb-info{ margin-top:10px; display:flex; gap:8px; align-items:flex-start; }
+  .verb-info .label{ font-size:12px; opacity:.7; min-width:86px; }
+  .verb-info .value{ font-size:13px; font-weight:600; }
+
+  .pill-row{ margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
+  .pill{ display:inline-flex; align-items:center; gap:6px; padding:5px 10px;
+    border-radius:999px; background:rgba(0,0,0,.05); font-size:12px; font-weight:700; }
+
+  .tabbar{ margin-top:12px; display:flex; gap:8px; }
+  .tab-btn{
+    border:1px solid rgba(0,0,0,.12);
+    background:#fff;
+    border-radius:999px;
+    padding:6px 10px;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .tab-btn.active{ background:rgba(0,0,0,.06); }
+  .tab-panel{ margin-top:12px; }
+  .tab-panel[hidden]{ display:none !important; }
+
+  .section-title{ font-size:12px; font-weight:900; letter-spacing:.3px; text-transform:uppercase; opacity:.7; margin:4px 0 10px; }
+
+  details.variety{
+    border:1px solid rgba(0,0,0,.10);
+    border-radius:14px;
+    padding:8px 10px;
+    background:rgba(0,0,0,.02);
+    margin-bottom:10px;
+  }
+  details.variety summary{
+    cursor:pointer;
+    font-weight:900;
+    font-size:13px;
+    list-style:none;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  details.variety summary::-webkit-details-marker{ display:none; }
+  .variety-meta{ margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
+  .meta-chip{
+    background:rgba(0,0,0,.05);
+    border-radius:999px;
+    padding:4px 8px;
+    font-size:12px;
+    font-weight:700;
+  }
+  .variety-expl{ margin-top:8px; font-size:13px; opacity:.9; }
+  .variety-examples{ margin:10px 0 0; padding-left:18px; }
+  .variety-examples li{ margin:6px 0; }
+
+  .save-btn{
+    border:1px solid rgba(0,0,0,.12);
+    background:#fff;
+    border-radius:999px;
+    padding:6px 10px;
+    cursor:pointer;
+    font-weight:800;
+  }
+  `;
+
+  const style = document.createElement('style');
+  style.setAttribute('data-verb-card-styles', '1');
+  style.textContent = css;
+  document.head.appendChild(style);
 }
 
 function escapeHtml(s) {
