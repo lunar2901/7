@@ -1932,3 +1932,81 @@ body{
   font-weight: 600;
 }
 
+
+/* ===== Level dropdown (hover to see all words) ===== */
+
+.level-btn {
+  position: relative !important;
+}
+
+.level-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 300;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  min-width: 220px;
+  max-height: 320px;
+  overflow-y: auto;
+  box-shadow: 0 6px 24px rgba(0,0,0,.13);
+  display: none;
+  padding: 6px 0;
+  text-align: left;
+}
+
+.level-btn:hover .level-dropdown,
+.level-btn:focus-within .level-dropdown {
+  display: block;
+}
+
+.level-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 7px 14px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  color: #111;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+.level-dropdown-item:hover {
+  background: #f4f4f4;
+}
+
+.level-dropdown-item .ddi-translation {
+  color: #888;
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+/* ===== Mobile: level buttons single scrollable row ===== */
+@media (max-width: 640px) {
+  .level-buttons {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    gap: 7px !important;
+  }
+  .level-buttons::-webkit-scrollbar { display: none; }
+
+  .level-btn {
+    flex-shrink: 0 !important;
+    white-space: nowrap;
+  }
+
+  /* On mobile, dropdown opens below and can scroll without clipping */
+  .level-dropdown {
+    max-height: 260px;
+  }
+}
