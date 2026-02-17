@@ -1,4 +1,4 @@
-// adjectives.js - Focus mode for adjectives
+// adjectives.js - Focus mode with level dropdowns + save
 import adjectivesA1 from './js/adjectives-db-a1.js';
 import adjectivesA2 from './js/adjectives-db-a2.js';
 import adjectivesB1 from './js/adjectives-db-b1.js';
@@ -6,68 +6,56 @@ import adjectivesB2 from './js/adjectives-db-b2.js';
 import adjectivesC1 from './js/adjectives-db-c1.js';
 import { initFocusMode } from './focus-mode.js';
 
-const adjectivesDB = { a1: adjectivesA1, a2: adjectivesA2, b1: adjectivesB1, b2: adjectivesB2, c1: adjectivesC1 };
-
+const DB = { a1: adjectivesA1, a2: adjectivesA2, b1: adjectivesB1, b2: adjectivesB2, c1: adjectivesC1 };
 const levelBtns = document.querySelectorAll('.level-btn');
-const searchInput = document.getElementById('search-input');
-const adjectiveCount = document.getElementById('adjective-count');
-const clearSearchBtn = document.getElementById('clear-search');
 
 let currentLevel = 'a1';
 let focusApi = null;
 
+const { getSaved, setSaved, setSaveBtnState, initSearchModal, registerPageItems } = window.SharedApp;
+
+function buildPageItems(level) {
+  return (DB[level] || []).map((adj, i) => ({
+    id: `adjectives:${level}:${adj.word}`,
+    label: adj.word || '—',
+    translation: (adj.translations || [])[0] || '',
+    index: i, level,
+  }));
+}
+
 renderCurrent();
 updateCounts();
+buildAllDropdowns();
+registerPageItems(buildPageItems(currentLevel));
+initSearchModal((item) => {
+  if (item.level !== currentLevel) {
+    const btn = document.querySelector(`.level-btn[data-level="${item.level}"]`);
+    if (btn) { levelBtns.forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLevel = item.level; renderCurrent(); }
+  }
+  setTimeout(() => focusApi?.jumpTo(item.index), 30);
+});
 
 levelBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     levelBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentLevel = btn.dataset.level;
-    searchInput.value = '';
-    clearSearchBtn.style.display = 'none';
     renderCurrent();
+    registerPageItems(buildPageItems(currentLevel));
   });
 });
 
-searchInput.addEventListener('input', (e) => {
-  const query = e.target.value.trim().toLowerCase();
-  clearSearchBtn.style.display = query ? 'block' : 'none';
-  renderCurrent(query);
-});
-
-clearSearchBtn.addEventListener('click', () => {
-  searchInput.value = '';
-  searchInput.dispatchEvent(new Event('input'));
-  searchInput.focus();
-});
-
-function filterAdjectives(level, query) {
-  const list = adjectivesDB[level] || [];
-  if (!query) return list;
-  return list.filter(adj => {
-    const searchText = [
-      adj.word, adj.comparative, adj.superlative,
-      ...(adj.translations || []),
-      ...(adj.examples || [])
-    ].filter(Boolean).join(' ').toLowerCase();
-    return searchText.includes(query);
-  });
-}
-
-function renderCurrent(query = '') {
+function renderCurrent() {
   const root = document.getElementById('study-root');
   if (!root) return;
   root.classList.add('study-root');
 
-  const list = filterAdjectives(currentLevel, query);
+  const list = DB[currentLevel] || [];
+  const countEl = document.getElementById('adjective-count');
+  if (countEl) countEl.textContent = `${list.length} ${list.length === 1 ? 'adjective' : 'adjectives'}`;
 
-  if (adjectiveCount) {
-    adjectiveCount.textContent = `${list.length} ${list.length === 1 ? 'adjective' : 'adjectives'}`;
-  }
-
-  if (list.length === 0) {
-    root.innerHTML = `<div class="no-results"><p>No adjectives found${query ? ` matching "${escapeHtml(query)}"` : ' in this level'}</p></div>`;
+  if (!list.length) {
+    root.innerHTML = `<div class="no-results"><p>No adjectives in this level yet.</p></div>`;
     return;
   }
 
@@ -76,55 +64,87 @@ function renderCurrent(query = '') {
     items: list,
     level: currentLevel,
     storageKey: 'adjectives',
-    getId: (a) => a.word,
+    getId: (a) => `adjectives:${currentLevel}:${a.word}`,
     getLabel: (a) => a.word || '—',
-    renderCard: (a) => createAdjectiveCard(a)
+    renderCard: (a) => createCard(a),
   });
 
   wireDrawerReview(focusApi);
   if (focusApi) focusApi.onChange = () => wireDrawerReview(focusApi);
 }
 
-function createAdjectiveCard(adj) {
+function buildAllDropdowns() {
+  Object.entries(DB).forEach(([level, items]) => {
+    const dd = document.getElementById(`dropdown-${level}`);
+    if (!dd || !items?.length) return;
+    const frag = document.createDocumentFragment();
+    items.forEach((adj, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'level-dropdown-item';
+      const label = adj.word || '—';
+      const trans = (adj.translations || [])[0] || '';
+      btn.innerHTML = `${esc(label)}<span class="ddi-translation">${esc(trans)}</span>`;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (level !== currentLevel) {
+          const levelBtn = document.querySelector(`.level-btn[data-level="${level}"]`);
+          if (levelBtn) { levelBtns.forEach(b => b.classList.remove('active')); levelBtn.classList.add('active'); currentLevel = level; renderCurrent(); }
+        }
+        setTimeout(() => focusApi?.jumpTo(i), 30);
+      });
+      frag.appendChild(btn);
+    });
+    dd.appendChild(frag);
+  });
+}
+
+function createCard(adj) {
   const card = document.createElement('div');
   card.className = 'verb-card';
-
-  const word = adj.word || '—';
-  const translations = (adj.translations || []).join(', ') || '—';
-  const comp = adj.comparative || '—';
-  const sup = adj.superlative || '—';
+  const saveId = `adjectives:${currentLevel}:${adj.word}`;
+  const label = adj.word || '—';
+  const trans = (adj.translations || []).join(', ') || '—';
 
   card.innerHTML = `
     <div class="verb-header">
-      <div class="verb-base">${escapeHtml(word)}</div>
+      <div class="verb-base">${esc(label)}</div>
+      <button class="save-btn" type="button"
+        data-save-id="${esc(saveId)}"
+        data-save-label="${esc(label)}"
+        data-save-trans="${esc((adj.translations||[])[0]||'')}"
+        data-save-url="adjectives.html"
+        aria-label="Save">♡</button>
     </div>
 
     <div class="verb-forms">
-      <div class="form-item">
-        <span class="form-label">Comparative</span>
-        <span class="form-value">${escapeHtml(comp)}</span>
-      </div>
-      <div class="form-item">
-        <span class="form-label">Superlative</span>
-        <span class="form-value">${escapeHtml(sup)}</span>
-      </div>
+      <div class="form-item"><span class="form-label">Comparative</span><span class="form-value">${esc(adj.comparative||'—')}</span></div>
+      <div class="form-item"><span class="form-label">Superlative</span><span class="form-value">${esc(adj.superlative||'—')}</span></div>
     </div>
 
     <div class="verb-info">
       <span class="label">Translation:</span>
-      <span class="value">${escapeHtml(translations)}</span>
+      <span class="value">${esc(trans)}</span>
     </div>
 
-    ${(adj.examples || []).length ? `
-      <div class="examples-section">
-        <h4>Examples</h4>
-        <ul class="examples-list">
-          ${(adj.examples || []).slice(0, 4).map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
-        </ul>
-      </div>
-    ` : ''}
+    ${(adj.examples||[]).length ? `
+      <div class="examples-section"><h4>Examples</h4>
+        <ul class="examples-list">${(adj.examples||[]).slice(0,4).map(ex=>`<li>${esc(ex)}</li>`).join('')}</ul>
+      </div>` : ''}
   `;
 
+  const btn = card.querySelector('.save-btn');
+  if (btn) {
+    setSaveBtnState(btn, getSaved().has(saveId));
+    btn.addEventListener('click', () => {
+      const s = getSaved();
+      const m = window.SharedApp.getMeta();
+      if (s.has(saveId)) { s.delete(saveId); delete m[saveId]; }
+      else { s.add(saveId); m[saveId] = { label, translation: (adj.translations||[])[0]||'', url: 'adjectives.html' }; }
+      setSaved(s); window.SharedApp.setMeta(m);
+      setSaveBtnState(btn, s.has(saveId));
+    });
+  }
   return card;
 }
 
@@ -132,43 +152,24 @@ function wireDrawerReview(api) {
   if (!api) return;
   const st = api.getState?.();
   if (!st) return;
-
-  const learnedHost = document.getElementById('drawerLearnedList');
-  const unlearnedHost = document.getElementById('drawerUnlearnedList');
-
-  if (learnedHost) {
-    learnedHost.innerHTML = (st.learned || []).length
-      ? st.learned.map(x => `<button class="drawer-item" data-jump="${x.i}">${escapeHtml(x.label)}</button>`).join('')
-      : `<div class="drawer-empty">No learned words yet.</div>`;
-  }
-  if (unlearnedHost) {
-    unlearnedHost.innerHTML = (st.unlearned || []).length
-      ? st.unlearned.map(x => `<button class="drawer-item" data-jump="${x.i}">${escapeHtml(x.label)}</button>`).join('')
-      : `<div class="drawer-empty">All learned 🎉</div>`;
-  }
-
-  document.querySelectorAll('[data-jump]').forEach(btn => {
-    btn.onclick = () => api.jumpTo(parseInt(btn.dataset.jump, 10));
-  });
-
-  const markLearned = document.getElementById('btnMarkLearned');
-  const markUnlearned = document.getElementById('btnMarkUnlearned');
-  if (markLearned) markLearned.onclick = () => { api.setLearned?.(true); wireDrawerReview(api); };
-  if (markUnlearned) markUnlearned.onclick = () => { api.setLearned?.(false); wireDrawerReview(api); };
+  const lh = document.getElementById('drawerLearnedList');
+  const uh = document.getElementById('drawerUnlearnedList');
+  if (lh) lh.innerHTML = st.learned?.length ? st.learned.map(x=>`<button class="drawer-item" data-jump="${x.i}">${esc(x.label)}</button>`).join('') : `<div class="drawer-empty">No learned words yet.</div>`;
+  if (uh) uh.innerHTML = st.unlearned?.length ? st.unlearned.map(x=>`<button class="drawer-item" data-jump="${x.i}">${esc(x.label)}</button>`).join('') : `<div class="drawer-empty">All learned 🎉</div>`;
+  document.querySelectorAll('[data-jump]').forEach(b => { b.onclick = () => api.jumpTo(parseInt(b.dataset.jump,10)); });
+  const ml = document.getElementById('btnMarkLearned');
+  const mu = document.getElementById('btnMarkUnlearned');
+  if (ml) ml.onclick = () => { api.setLearned?.(true); wireDrawerReview(api); };
+  if (mu) mu.onclick = () => { api.setLearned?.(false); wireDrawerReview(api); };
 }
 
 function updateCounts() {
-  Object.keys(adjectivesDB).forEach(level => {
+  Object.keys(DB).forEach(level => {
     const badge = document.getElementById(`count-${level}`);
-    if (badge) badge.textContent = (adjectivesDB[level] || []).length;
+    if (badge) badge.textContent = (DB[level]||[]).length;
   });
 }
 
-document.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'f') { e.preventDefault(); searchInput.focus(); }
-  if (e.key === 'Escape' && searchInput.value) { searchInput.value = ''; searchInput.dispatchEvent(new Event('input')); }
-});
-
-function escapeHtml(s) {
-  return String(s ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+function esc(s) {
+  return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
 }
