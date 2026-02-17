@@ -1,4 +1,4 @@
-// nouns.js - Focus mode (1 noun at a time + accordion lists)
+// nouns.js - Focus mode with level dropdowns + save
 import nounsA1 from './js/nouns-db-a1.js';
 import nounsA2 from './js/nouns-db-a2.js';
 import nounsB1 from './js/nouns-db-b1.js';
@@ -6,264 +6,186 @@ import nounsB2 from './js/nouns-db-b2.js';
 import nounsC1 from './js/nouns-db-c1.js';
 import { initFocusMode } from './focus-mode.js';
 
-const nounsDB = {
-  a1: nounsA1,
-  a2: nounsA2,
-  b1: nounsB1,
-  b2: nounsB2,
-  c1: nounsC1,
-};
-
+const DB = { a1: nounsA1, a2: nounsA2, b1: nounsB1, b2: nounsB2, c1: nounsC1 };
 const levelBtns = document.querySelectorAll('.level-btn');
-const searchInput = document.getElementById('search-input');
-const nounCount = document.getElementById('noun-count');
-const clearSearchBtn = document.getElementById('clear-search');
 
 let currentLevel = 'a1';
-// ===== Saved words (localStorage) =====
-const SAVED_KEY = 'savedWordsV1';
-const getSaved = () => new Set(JSON.parse(localStorage.getItem(SAVED_KEY) || '[]'));
-const setSaved = (set) => localStorage.setItem(SAVED_KEY, JSON.stringify([...set]));
+let focusApi = null;
 
-function setSaveBtnState(btn, isSaved) {
-  btn.textContent = isSaved ? '♥' : '♡';
-  btn.classList.toggle('saved', isSaved);
+const { getSaved, setSaved, setSaveBtnState, initSearchModal, registerPageItems } = window.SharedApp;
+
+function getArticle(noun) {
+  return noun.gender === 'm' ? 'der' : noun.gender === 'f' ? 'die' : noun.gender === 'n' ? 'das' : '';
 }
 
-function makeSaveId(category, level, label) {
-  return `${category}:${level}:${label}`;
+function getLabel(noun) {
+  const word = noun.word || '—';
+  // If word already starts with an article, use as-is
+  if (/^(der|die|das)\s/i.test(word)) return word;
+  const art = getArticle(noun);
+  return art ? `${art} ${word}` : word;
 }
 
-// Initialize
+function buildPageItems(level) {
+  return (DB[level] || []).map((noun, i) => ({
+    id: `nouns:${level}:${noun.word}`,
+    label: getLabel(noun),
+    translation: (noun.translations || [])[0] || '',
+    index: i, level,
+  }));
+}
+
 renderCurrent();
 updateCounts();
+buildAllDropdowns();
+registerPageItems(buildPageItems(currentLevel));
+initSearchModal((item) => {
+  if (item.level !== currentLevel) {
+    const btn = document.querySelector(`.level-btn[data-level="${item.level}"]`);
+    if (btn) { levelBtns.forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLevel = item.level; renderCurrent(); }
+  }
+  setTimeout(() => focusApi?.jumpTo(item.index), 30);
+});
 
-// Level buttons
 levelBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     levelBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
     currentLevel = btn.dataset.level;
-    searchInput.value = '';
-    clearSearchBtn.style.display = 'none';
-
     renderCurrent();
+    registerPageItems(buildPageItems(currentLevel));
   });
 });
 
-// Search
-searchInput.addEventListener('input', (e) => {
-  const query = e.target.value.trim().toLowerCase();
-  clearSearchBtn.style.display = query ? 'block' : 'none';
-  renderCurrent(query);
-});
+function renderCurrent() {
+  const root = document.getElementById('study-root');
+  if (!root) return;
+  root.classList.add('study-root');
 
-clearSearchBtn.addEventListener('click', () => {
-  searchInput.value = '';
-  searchInput.dispatchEvent(new Event('input'));
-  searchInput.focus();
-});
+  const list = DB[currentLevel] || [];
+  const countEl = document.getElementById('noun-count');
+  if (countEl) countEl.textContent = `${list.length} ${list.length === 1 ? 'noun' : 'nouns'}`;
 
-function filterNouns(level, query) {
-  const nouns = nounsDB[level] || [];
-  if (!query) return nouns;
+  if (!list.length) {
+    root.innerHTML = `<div class="no-results"><p>No nouns in this level yet.</p></div>`;
+    return;
+  }
 
-  return nouns.filter(noun => {
-    const searchText = [
-      noun.word,
-      noun.plural,
-      noun.genitive,
-      ...(noun.translations || []),
-      ...(noun.examples || [])
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase();
+  focusApi = initFocusMode({
+    rootId: 'study-root',
+    items: list,
+    level: currentLevel,
+    storageKey: 'nouns',
+    getId: (n) => `nouns:${currentLevel}:${n.word}`,
+    getLabel: (n) => getLabel(n),
+    renderCard: (n) => createCard(n),
+  });
 
-    return searchText.includes(query);
+  wireDrawerReview(focusApi);
+  if (focusApi) focusApi.onChange = () => wireDrawerReview(focusApi);
+}
+
+function buildAllDropdowns() {
+  Object.entries(DB).forEach(([level, items]) => {
+    const dd = document.getElementById(`dropdown-${level}`);
+    if (!dd || !items?.length) return;
+    const frag = document.createDocumentFragment();
+    items.forEach((noun, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'level-dropdown-item';
+      const label = getLabel(noun);
+      const trans = (noun.translations || [])[0] || '';
+      btn.innerHTML = `${esc(label)}<span class="ddi-translation">${esc(trans)}</span>`;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (level !== currentLevel) {
+          const levelBtn = document.querySelector(`.level-btn[data-level="${level}"]`);
+          if (levelBtn) { levelBtns.forEach(b => b.classList.remove('active')); levelBtn.classList.add('active'); currentLevel = level; renderCurrent(); }
+        }
+        setTimeout(() => focusApi?.jumpTo(i), 30);
+      });
+      frag.appendChild(btn);
+    });
+    dd.appendChild(frag);
   });
 }
 
-function renderCurrent(query = '') {
-  const root = document.getElementById('study-root');
-  if (!root) {
-    console.error('Missing #study-root in nouns.html');
-    return;
-  }
+function createCard(noun) {
+  const card = document.createElement('div');
+  card.className = 'verb-card';
+  const saveId = `nouns:${currentLevel}:${noun.word}`;
+  const label = getLabel(noun);
+  const art = getArticle(noun);
+  const trans = (noun.translations || []).join(', ') || '—';
 
-  // helps CSS override to single-column
-  root.classList.add('study-root');
-
-  const nouns = filterNouns(currentLevel, query);
-
-  nounCount.textContent = `${nouns.length} ${nouns.length === 1 ? 'noun' : 'nouns'}`;
-
-  if (nouns.length === 0) {
-    root.innerHTML = `
-      <div class="no-results">
-        <p>No nouns found${query ? ` matching "${escapeHtml(query)}"` : ' in this level'}</p>
+  card.innerHTML = `
+    <div class="verb-header">
+      <div>
+        <div class="verb-base">${esc(label)}</div>
+        ${art ? `<div class="reflexive-marker">Gender: ${esc(art)}</div>` : ''}
       </div>
-    `;
-    return;
+      <button class="save-btn" type="button"
+        data-save-id="${esc(saveId)}"
+        data-save-label="${esc(label)}"
+        data-save-trans="${esc((noun.translations||[])[0]||'')}"
+        data-save-url="nouns.html"
+        aria-label="Save">♡</button>
+    </div>
+
+    <div class="verb-forms">
+      <div class="form-item"><span class="form-label">Plural</span><span class="form-value">${esc(noun.plural||'—')}</span></div>
+      <div class="form-item"><span class="form-label">Genitive</span><span class="form-value">${esc(noun.genitive||'—')}</span></div>
+    </div>
+
+    <div class="verb-info">
+      <span class="label">Translation:</span>
+      <span class="value">${esc(trans)}</span>
+    </div>
+
+    ${(noun.examples||[]).length ? `
+      <div class="examples-section"><h4>Examples</h4>
+        <ul class="examples-list">${(noun.examples||[]).slice(0,4).map(ex=>`<li>${esc(ex)}</li>`).join('')}</ul>
+      </div>` : ''}
+  `;
+
+  const btn = card.querySelector('.save-btn');
+  if (btn) {
+    setSaveBtnState(btn, getSaved().has(saveId));
+    btn.addEventListener('click', () => {
+      const s = getSaved();
+      const m = window.SharedApp.getMeta();
+      if (s.has(saveId)) { s.delete(saveId); delete m[saveId]; }
+      else { s.add(saveId); m[saveId] = { label, translation: (noun.translations||[])[0]||'', url: 'nouns.html' }; }
+      setSaved(s); window.SharedApp.setMeta(m);
+      setSaveBtnState(btn, s.has(saveId));
+    });
   }
-
-  // ✅ Focus mode (accordion + single card)
-  const api = initFocusMode({
-    rootId: 'study-root',
-    items: nouns,
-    level: currentLevel,
-    storageKey: 'nouns',
-
-    getId: (n) => n.word,
-    getLabel: (n) => formatNounLabel(n),
-    renderCard: (n) => createNounCard(n)
-  });
-
-  wireDrawerReview(api);
-  if (api) api.onChange = () => wireDrawerReview(api);
+  return card;
 }
 
 function wireDrawerReview(api) {
   if (!api) return;
   const st = api.getState?.();
   if (!st) return;
-
-  const learnedHost = document.getElementById('drawerLearnedList');
-  const unlearnedHost = document.getElementById('drawerUnlearnedList');
-
-  if (learnedHost) {
-    learnedHost.innerHTML = (st.learned || []).length
-      ? st.learned.map(x => `<button class="drawer-item" data-jump="${x.i}">${escapeHtml(x.label)}</button>`).join('')
-      : `<div class="drawer-empty">No learned words yet.</div>`;
-  }
-  if (unlearnedHost) {
-    unlearnedHost.innerHTML = (st.unlearned || []).length
-      ? st.unlearned.map(x => `<button class="drawer-item" data-jump="${x.i}">${escapeHtml(x.label)}</button>`).join('')
-      : `<div class="drawer-empty">All learned 🎉</div>`;
-  }
-
-  document.querySelectorAll('[data-jump]').forEach(btn => {
-    btn.onclick = () => api.jumpTo(parseInt(btn.dataset.jump, 10));
-  });
-
-  const markLearned = document.getElementById('btnMarkLearned');
-  const markUnlearned = document.getElementById('btnMarkUnlearned');
-  if (markLearned) markLearned.onclick = () => { api.setLearned?.(true); wireDrawerReview(api); };
-  if (markUnlearned) markUnlearned.onclick = () => { api.setLearned?.(false); wireDrawerReview(api); };
-}
-
-function formatNounLabel(noun) {
-  // label inside accordion list
-  const article =
-    noun.gender === 'm' ? 'der' :
-    noun.gender === 'f' ? 'die' :
-    noun.gender === 'n' ? 'das' : '';
-
-  const word = noun.word || '—';
-  const hasArticle = typeof word === 'string' && word.split(' ').length > 1;
-  return hasArticle || !article ? word : `${article} ${word}`;
-}
-
-// ✅ noun card (single item). Uses your existing CSS classes form-item/label/value etc.
-function createNounCard(noun) {
-  const card = document.createElement('div');
-  card.className = 'verb-card'; // reuse verb-card styling so it matches your theme
-
-  const genderText =
-    noun.gender === 'm' ? 'der' :
-    noun.gender === 'f' ? 'die' :
-    noun.gender === 'n' ? 'das' : '';
-
-  const baseWord = formatNounLabel(noun);
-  const saveId = makeSaveId('nouns', currentLevel, baseWord);
-  const isInitiallySaved = getSaved().has(saveId);
-
-  card.innerHTML = `
-    <div class="verb-header">
-      <div>
-        <div class="verb-base">${escapeHtml(baseWord)}</div>
-        <div class="reflexive-marker">${escapeHtml(genderText ? `Gender: ${genderText}` : '')}</div>
-      </div>
-    
-      <button class="save-btn"
-              type="button"
-              data-save-id="${escapeHtml(saveId)}"
-              aria-label="Save">
-        ${isInitiallySaved ? '♥' : '♡'}
-      </button>
-    </div>
-
-
-    <div class="verb-forms">
-      <div class="form-item">
-        <span class="form-label">Plural</span>
-        <span class="form-value">${escapeHtml(noun.plural || '—')}</span>
-      </div>
-      <div class="form-item">
-        <span class="form-label">Genitive</span>
-        <span class="form-value">${escapeHtml(noun.genitive || '—')}</span>
-      </div>
-    </div>
-
-    <div class="verb-info">
-      <span class="label">Translation:</span>
-      <span class="value">${escapeHtml((noun.translations || []).join(', ') || '—')}</span>
-    </div>
-
-    ${
-      (noun.examples || []).length
-        ? `
-          <div class="examples-section">
-            <h4>Examples</h4>
-            <ul class="examples-list">
-              ${(noun.examples || []).slice(0, 4).map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
-            </ul>
-          </div>
-        `
-        : ''
-    }
-  `;
-  const btn = card.querySelector('.save-btn');
-    if (btn) {
-      setSaveBtnState(btn, getSaved().has(saveId));
-    
-      btn.addEventListener('click', () => {
-        const s = getSaved();
-        if (s.has(saveId)) s.delete(saveId);
-        else s.add(saveId);
-        setSaved(s);
-        setSaveBtnState(btn, s.has(saveId));
-      });
-    }
-
-  return card;
+  const lh = document.getElementById('drawerLearnedList');
+  const uh = document.getElementById('drawerUnlearnedList');
+  if (lh) lh.innerHTML = st.learned?.length ? st.learned.map(x=>`<button class="drawer-item" data-jump="${x.i}">${esc(x.label)}</button>`).join('') : `<div class="drawer-empty">No learned words yet.</div>`;
+  if (uh) uh.innerHTML = st.unlearned?.length ? st.unlearned.map(x=>`<button class="drawer-item" data-jump="${x.i}">${esc(x.label)}</button>`).join('') : `<div class="drawer-empty">All learned 🎉</div>`;
+  document.querySelectorAll('[data-jump]').forEach(b => { b.onclick = () => api.jumpTo(parseInt(b.dataset.jump,10)); });
+  const ml = document.getElementById('btnMarkLearned');
+  const mu = document.getElementById('btnMarkUnlearned');
+  if (ml) ml.onclick = () => { api.setLearned?.(true); wireDrawerReview(api); };
+  if (mu) mu.onclick = () => { api.setLearned?.(false); wireDrawerReview(api); };
 }
 
 function updateCounts() {
-  Object.keys(nounsDB).forEach(level => {
+  Object.keys(DB).forEach(level => {
     const badge = document.getElementById(`count-${level}`);
-    if (badge) badge.textContent = (nounsDB[level] || []).length;
+    if (badge) badge.textContent = (DB[level]||[]).length;
   });
 }
 
-// Keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-    e.preventDefault();
-    searchInput.focus();
-  }
-  if (e.key === 'Escape' && searchInput.value) {
-    searchInput.value = '';
-    searchInput.dispatchEvent(new Event('input'));
-  }
-});
-
-function escapeHtml(s) {
-  return String(s ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
+function esc(s) {
+  return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
 }
