@@ -548,6 +548,11 @@ body {
   color: var(--gray-700);
   line-height: 1.6;
 }
+/* Make examples inside varieties less “heavy” than the main examples section */
+.variants-list .examples-list li {
+  margin-bottom: var(--spacing-xs);
+  border-left-color: var(--gray-200);
+}
 
 /* === No Results === */
 .no-results {
