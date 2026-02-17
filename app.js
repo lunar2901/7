@@ -279,6 +279,10 @@ function getForms(v) {
       }
     }
   }
+    // If present is missing, use first derived (ich-form) as present
+  if ((!p || p === '—') && Array.isArray(v.derived) && v.derived[0]) {
+    p = String(v.derived[0]).trim();
+  }
   return { present: p || '—', past: pa || '—', partizip2: pp || '—', aux: a || '' };
 }
 
@@ -323,68 +327,72 @@ function createVerbCard(v, idx) {
   const card = document.createElement('div');
   card.className = 'verb-card';
 
-  const base = getVerbBase(v);
-  const saveId = `verbs:${currentLevel}:${base}`;
+  const infinitive = getVerbBase(v);     // keep for ids/search/save
+  const saveId = `verbs:${currentLevel}:${infinitive}`;
+
   const typeText = getTypeText(v);
   const forms = getForms(v);
   const translations = getTranslations(v);
   const variants = getVariants(v);
 
-  // Main derived forms for the base verb (if present in DB)
-  const mainDerived = Array.isArray(v.derived) ? v.derived : [];
+  // Display base as PRESENT form (ich-form), but keep infinitive as subtitle
+  const displayBase = (forms.present && forms.present !== '—') ? forms.present : infinitive;
 
-  // Collapsible varieties (each includes its own examples)
+  // Derived as plain text (not pills)
+  const mainDerived = Array.isArray(v.derived) ? v.derived : [];
+  const derivedText = mainDerived.length ? mainDerived.join(' | ') : '';
+
+  // Non-collapsible varieties
   const varietiesHtml = (Array.isArray(variants) ? variants : []).map((vr) => {
     if (typeof vr === 'string') {
       return `
-        <details class="variety">
-          <summary><span>${escapeHtml(vr)}</span><span>▾</span></summary>
-        </details>
+        <div class="variety-block">
+          <div class="variety-title">${escapeHtml(vr)}</div>
+        </div>
       `;
     }
 
     const title = vr.variant || vr.name || vr.text || 'Usage';
     const explanation = vr.explanation || '';
-
-    // Prepositions per variety (array in your DB)
     const prepsArr = Array.isArray(vr.prepositions) ? vr.prepositions : [];
-
-    // Derived per variety (separable forms etc., if present)
     const derivedArr = Array.isArray(vr.derived) ? vr.derived : [];
-
-    // Examples per variety (array in your DB)
     const exArr = Array.isArray(vr.examples)
       ? vr.examples
       : (vr.examples ? [String(vr.examples)] : []);
 
-    const metaBits = [];
-    if (prepsArr.length) metaBits.push(`<span class="meta-chip">Prep: ${escapeHtml(prepsArr.join(', '))}</span>`);
-    if (derivedArr.length) metaBits.push(`<span class="meta-chip">Derived: ${escapeHtml(derivedArr.join(' | '))}</span>`);
-
     return `
-      <details class="variety">
-        <summary><span>${escapeHtml(title)}</span><span>▾</span></summary>
+      <div class="variety-block">
+        <div class="variety-title">${escapeHtml(title)}</div>
 
-        ${metaBits.length ? `<div class="variety-meta">${metaBits.join('')}</div>` : ''}
+        ${(prepsArr.length || derivedArr.length) ? `
+          <div class="variety-meta">
+            ${prepsArr.length ? `<span class="meta-chip">Prep: ${escapeHtml(prepsArr.join(', '))}</span>` : ''}
+            ${derivedArr.length ? `<span class="meta-chip">Derived: ${escapeHtml(derivedArr.join(' | '))}</span>` : ''}
+          </div>
+        ` : ''}
+
         ${explanation ? `<div class="variety-expl">${escapeHtml(explanation)}</div>` : ''}
+
         ${exArr.length ? `
           <ul class="variety-examples">
             ${exArr.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
-          </ul>` : ''}
-      </details>
+          </ul>
+        ` : ''}
+      </div>
     `;
   }).join('');
 
   card.innerHTML = `
     <div class="verb-header">
       <div>
-        <div class="verb-base">${escapeHtml(base)}</div>
+        <div class="verb-base">${escapeHtml(displayBase)}</div>
+        <div class="verb-sub">${escapeHtml(infinitive)}</div>
         ${typeText ? `<div class="reflexive-marker">${escapeHtml(typeText)}</div>` : ''}
       </div>
 
       <button class="save-btn" type="button"
         data-save-id="${escapeHtml(saveId)}"
-        data-save-label="${escapeHtml(base)}"
+        data-save-label="${escapeHtml(infinitive)}"
         data-save-trans="${escapeHtml(translations[0] || '')}"
         data-save-url="index.html"
         aria-label="Save">♡</button>
@@ -396,17 +404,14 @@ function createVerbCard(v, idx) {
         <span class="value">${escapeHtml(translations.join(', '))}</span>
       </div>` : ''}
 
-    ${mainDerived.length ? `
-      <div class="pill-row" aria-label="Derived forms">
-        ${mainDerived.map(x => `<span class="pill">${escapeHtml(x)}</span>`).join('')}
+    ${derivedText ? `
+      <div class="verb-info">
+        <span class="label">Derived</span>
+        <span class="value">${escapeHtml(derivedText)}</span>
       </div>` : ''}
 
-    <div class="tabbar">
-      <button type="button" class="tab-btn active" data-tab="forms">Forms</button>
-      <button type="button" class="tab-btn" data-tab="usage">Usage</button>
-    </div>
-
-    <div class="tab-panel" data-panel="forms">
+    <div class="forms-section">
+      <div class="section-title">Forms</div>
       <div class="verb-forms">
         <div class="form-item">
           <span class="form-label">Present</span>
@@ -423,28 +428,11 @@ function createVerbCard(v, idx) {
       </div>
     </div>
 
-    <div class="tab-panel" data-panel="usage" hidden>
+    <div class="usage-section">
       <div class="section-title">Varieties</div>
       ${varietiesHtml || `<div style="opacity:.7;font-weight:800;">No varieties listed for this verb yet.</div>`}
     </div>
   `;
-
-  // Tabs behavior
-  const tabBtns = card.querySelectorAll('.tab-btn');
-  const panels = {
-    forms: card.querySelector('[data-panel="forms"]'),
-    usage: card.querySelector('[data-panel="usage"]'),
-  };
-
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      tabBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const target = btn.dataset.tab;
-      panels.forms.hidden = target !== 'forms';
-      panels.usage.hidden = target !== 'usage';
-    });
-  });
 
   // Wire save button via SharedApp (unchanged)
   const btn = card.querySelector('.save-btn');
@@ -454,7 +442,7 @@ function createVerbCard(v, idx) {
       const s = getSaved();
       const m = window.SharedApp.getMeta();
       if (s.has(saveId)) { s.delete(saveId); delete m[saveId]; }
-      else { s.add(saveId); m[saveId] = { label: base, translation: translations[0] || '', url: 'index.html' }; }
+      else { s.add(saveId); m[saveId] = { label: infinitive, translation: translations[0] || '', url: 'index.html' }; }
       setSaved(s);
       window.SharedApp.setMeta(m);
       setSaveBtnState(btn, s.has(saveId));
@@ -463,6 +451,7 @@ function createVerbCard(v, idx) {
 
   return card;
 }
+
 
 /* ========================= Drawer ========================= */
 
