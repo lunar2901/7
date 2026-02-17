@@ -219,8 +219,9 @@ function createVerbCard(v, idx) {
   const translations = getTranslations(v);
   const examples = getExamples(v);
   const variants = getVariants(v);
-  const preps = asText(v.prepositions) || asText(v.preposition) || asText(v.prep);
-  const prepHtml = preps ? `<span class="prep-badge">${escapeHtml(preps)}</span>` : '';
+
+  // Show main derived forms from the verb (e.g. sein: bin, bist, ist...)
+  const mainDerived = Array.isArray(v.derived) ? v.derived : [];
 
   card.innerHTML = `
     <div class="verb-header">
@@ -245,27 +246,73 @@ function createVerbCard(v, idx) {
       </div>
     </div>
 
-    ${translations.length ? `<div class="verb-info"><span class="label">Translation:</span><span class="value">${escapeHtml(translations.join(', '))}</span></div>` : ''}
-    ${prepHtml ? `<div class="verb-info"><span class="label">Preposition:</span><span class="value">${prepHtml}</span></div>` : ''}
+    ${translations.length ? `
+      <div class="verb-info">
+        <span class="label">Translation:</span>
+        <span class="value">${escapeHtml(translations.join(', '))}</span>
+      </div>` : ''}
+
+    ${mainDerived.length ? `
+      <div class="verb-info">
+        <span class="label">Derived:</span>
+        <span class="value">${escapeHtml(mainDerived.join(' | '))}</span>
+      </div>` : ''}
 
     ${variants.length ? `
-      <div class="variants-section"><h4>Varieties / Usages</h4><ul class="variants-list">
+      <div class="variants-section">
+        <h4>Varieties / Usages</h4>
+
         ${variants.map(vr => {
-          if (typeof vr === 'string') return `<li>${escapeHtml(vr)}</li>`;
-          const txt = vr.text || vr.name || vr.variant || vr.word || vr.meaning || '';
-          const prep = vr.preps || vr.preposition || vr.prep || '';
-          const ex = vr.example || vr.sentence || vr.examples || '';
-          return `<li>${escapeHtml(txt)}${prep?`<div class="variant-preps">${escapeHtml(String(prep))}</div>`:''}${ex?`<div class="variant-example">${escapeHtml(Array.isArray(ex)?ex.join(' | '):String(ex))}</div>`:''}</li>`;
+          // Support both string variants and object variants
+          if (typeof vr === 'string') {
+            return `<div class="variant-block"><div class="variant-title">${escapeHtml(vr)}</div></div>`;
+          }
+
+          const title = vr.variant || vr.name || vr.text || '';
+          const explanation = vr.explanation || '';
+          const prepsArr = Array.isArray(vr.prepositions) ? vr.prepositions : [];
+          const derivedArr = Array.isArray(vr.derived) ? vr.derived : [];
+          const exArr = Array.isArray(vr.examples) ? vr.examples : (vr.examples ? [String(vr.examples)] : []);
+
+          return `
+            <div class="variant-block">
+              ${title ? `<div class="variant-title">${escapeHtml(title)}</div>` : ''}
+
+              ${prepsArr.length ? `
+                <div class="variant-preps">
+                  <strong>Prepositions:</strong> ${escapeHtml(prepsArr.join(', '))}
+                </div>` : ''}
+
+              ${derivedArr.length ? `
+                <div class="variant-derived">
+                  <strong>Derived:</strong> ${escapeHtml(derivedArr.join(' | '))}
+                </div>` : ''}
+
+              ${explanation ? `
+                <div class="variant-explanation">
+                  ${escapeHtml(explanation)}
+                </div>` : ''}
+
+              ${exArr.length ? `
+                <ul class="variant-examples">
+                  ${exArr.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
+                </ul>` : ''}
+            </div>
+          `;
         }).join('')}
-      </ul></div>` : ''}
+
+      </div>` : ''}
 
     ${examples.length ? `
-      <div class="examples-section"><h4>Examples</h4><ul class="examples-list">
-        ${examples.slice(0,4).map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
-      </ul></div>` : ''}
+      <div class="examples-section">
+        <h4>Examples</h4>
+        <ul class="examples-list">
+          ${examples.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
+        </ul>
+      </div>` : ''}
   `;
 
-  // Wire save button via SharedApp
+  // Wire save button via SharedApp (unchanged from your current code)
   const btn = card.querySelector('.save-btn');
   if (btn) {
     setSaveBtnState(btn, getSaved().has(saveId));
@@ -281,6 +328,7 @@ function createVerbCard(v, idx) {
 
   return card;
 }
+
 
 /* ========================= Drawer ========================= */
 
