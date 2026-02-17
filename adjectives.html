@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>German Adjectives Learning App</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇩🇪</text></svg>">
+</head>
+<body>
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="13.33" fill="#000"/>
+            <rect y="13.33" width="40" height="13.33" fill="#DD0000"/>
+            <rect y="26.67" width="40" height="13.33" fill="#FFCE00"/>
+          </svg>
+          <h1>German Adjectives</h1>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn menu-btn" type="button" aria-label="Menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="drawer-backdrop" hidden></div>
+  <aside class="drawer" hidden>
+    <div class="drawer-top">
+      <div class="drawer-title">Menu</div>
+      <button class="icon-btn drawer-close" type="button" aria-label="Close menu">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18"></path><path d="M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <nav class="drawer-nav">
+      <a href="index.html" class="drawer-link">🔤 Verbs</a>
+      <a href="nouns.html" class="drawer-link">📦 Nouns</a>
+      <a href="adjectives.html" class="drawer-link drawer-link--active">🎨 Adjectives</a>
+      <a href="adverbs.html" class="drawer-link">💨 Adverbs</a>
+      <a href="practice.html" class="drawer-link">✅ Practice</a>
+      <a href="grammar.html" class="drawer-link">📖 Grammar</a>
+    </nav>
+    <div class="drawer-section">
+      <div class="drawer-section-title">Review</div>
+      <button class="drawer-chip" id="btnMarkLearned" type="button">Mark learned</button>
+      <button class="drawer-chip" id="btnMarkUnlearned" type="button">Mark not learned</button>
+      <details class="drawer-acc" open>
+        <summary>Learned</summary>
+        <div id="drawerLearnedList" class="drawer-list"></div>
+      </details>
+      <details class="drawer-acc">
+        <summary>Not learned</summary>
+        <div id="drawerUnlearnedList" class="drawer-list"></div>
+      </details>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="container">
+      <section class="level-section">
+        <h3>Select Level</h3>
+        <div class="level-buttons">
+          <button class="level-btn active" data-level="a1">
+            <span class="level-badge">A1</span>
+            <span class="level-name">Beginner</span>
+            <span class="level-count" id="count-a1">0</span>
+          </button>
+          <button class="level-btn" data-level="a2">
+            <span class="level-badge">A2</span>
+            <span class="level-name">Elementary</span>
+            <span class="level-count" id="count-a2">0</span>
+          </button>
+          <button class="level-btn" data-level="b1">
+            <span class="level-badge">B1</span>
+            <span class="level-name">Intermediate</span>
+            <span class="level-count" id="count-b1">0</span>
+          </button>
+          <button class="level-btn" data-level="b2">
+            <span class="level-badge">B2</span>
+            <span class="level-name">Upper Int.</span>
+            <span class="level-count" id="count-b2">0</span>
+          </button>
+          <button class="level-btn" data-level="c1">
+            <span class="level-badge">C1</span>
+            <span class="level-name">Advanced</span>
+            <span class="level-count" id="count-c1">0</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="search-section">
+        <div class="search-container">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search adjectives, translations, or examples..." aria-label="Search adjectives" />
+          <button id="clear-search" class="clear-search" aria-label="Clear search" style="display: none;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="verb-count-container">
+          <span id="adjective-count" class="verb-count"></span>
+        </div>
+      </section>
+
+      <section class="verbs-section">
+        <div id="study-root" class="study-root"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="main-footer">
+    <div class="container">
+      <p>&copy; 2026 German Learning App | Built with ❤️ for language learners</p>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.querySelector(".menu-btn");
+    const drawer = document.querySelector(".drawer");
+    const backdrop = document.querySelector(".drawer-backdrop");
+    const closeBtn = document.querySelector(".drawer-close");
+    function openMenu(){ drawer.hidden=false; backdrop.hidden=false; menuBtn?.setAttribute("aria-expanded","true"); }
+    function closeMenu(){ drawer.hidden=true; backdrop.hidden=true; menuBtn?.setAttribute("aria-expanded","false"); }
+    menuBtn?.addEventListener("click", openMenu);
+    closeBtn?.addEventListener("click", closeMenu);
+    backdrop?.addEventListener("click", closeMenu);
+  </script>
+  <script type="module" src="adjectives.js"></script>
+</body>
+</html>

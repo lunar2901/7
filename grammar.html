@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>German Grammar Knowledge Base (A1–C2)</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇩🇪</text></svg>">
+  <style>
+    :root{ --panel:rgba(0,0,0,.04); --border:rgba(0,0,0,.10); --muted:rgba(0,0,0,.70); --radius:14px; }
+    .grammar-shell{ display:grid; grid-template-columns:300px 1fr; gap:1rem; align-items:start; }
+    @media(max-width:980px){ .grammar-shell{ grid-template-columns:1fr; } .sidebar{ position:static!important; } }
+    .sidebar{ position:sticky; top:1rem; border:1px solid var(--border); border-radius:var(--radius); background:white; padding:1rem; }
+    .sidebar h3{ margin:0 0 .75rem; }
+    .muted{ color:var(--muted); }
+    .pill{ display:inline-block; padding:.28rem .6rem; border-radius:999px; border:1px solid var(--border); margin:.2rem .25rem .2rem 0; font-size:.85rem; cursor:pointer; user-select:none; background:white; }
+    .pill.active{ border-color:rgba(0,0,0,.35); font-weight:800; }
+    .chip{ display:inline-block; padding:.2rem .5rem; border-radius:999px; border:1px solid var(--border); font-size:.78rem; background:white; margin:.15rem .25rem 0 0; cursor:pointer; user-select:none; }
+    .chip.active{ border-color:rgba(0,0,0,.35); font-weight:800; }
+    .topic-links{ margin-top:.6rem; display:flex; flex-direction:column; gap:.35rem; max-height:46vh; overflow:auto; padding-right:.25rem; }
+    .topic-links a{ text-decoration:none; padding:.35rem .5rem; border-radius:10px; border:1px solid transparent; color:inherit; }
+    .topic-links a:hover{ background:var(--panel); border-color:var(--border); }
+    .content-area{ border:1px solid var(--border); border-radius:var(--radius); background:white; padding:1rem; }
+    .controls{ display:flex; gap:.75rem; flex-wrap:wrap; align-items:center; padding:.75rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); margin-bottom:1rem; }
+    .controls label{ font-size:.9rem; color:var(--muted); }
+    .controls input[type="search"]{ flex:1 1 280px; padding:.6rem .75rem; border-radius:12px; border:1px solid var(--border); background:white; outline:none; }
+    .controls select{ padding:.55rem .65rem; border-radius:12px; border:1px solid var(--border); background:white; }
+    .toggle{ display:flex; align-items:center; gap:.45rem; padding:.4rem .6rem; border-radius:999px; border:1px solid var(--border); background:white; user-select:none; }
+    .toggle input{ transform:translateY(1px); }
+    .topic-grid{ display:grid; grid-template-columns:1fr; gap:.85rem; }
+    .topic-card{ border:1px solid var(--border); border-radius:var(--radius); padding:.95rem; background:white; }
+    .topic-head{ display:flex; justify-content:space-between; gap:.75rem; align-items:flex-start; }
+    .topic-title{ margin:0; font-size:1.06rem; line-height:1.25; }
+    .topic-meta{ display:flex; gap:.35rem; flex-wrap:wrap; justify-content:flex-end; align-items:center; }
+    .tag{ display:inline-block; padding:.2rem .5rem; border-radius:999px; border:1px solid var(--border); font-size:.8rem; white-space:nowrap; }
+    .topic-summary{ margin:.55rem 0 0; color:var(--muted); }
+    details{ margin-top:.75rem; border-top:1px dashed var(--border); padding-top:.6rem; }
+    details>summary{ cursor:pointer; font-weight:800; list-style:none; }
+    details>summary::-webkit-details-marker{ display:none; }
+    .box{ margin-top:.6rem; padding:.75rem; border-radius:12px; border:1px solid var(--border); background:var(--panel); }
+    .box p{ margin:.3rem 0; } .box ul{ margin:.4rem 0 .2rem 1.25rem; } .box ol{ margin:.4rem 0 .2rem 1.25rem; }
+    .grammar-table{ width:100%; border-collapse:collapse; margin-top:.6rem; overflow:hidden; border-radius:12px; background:white; }
+    .grammar-table th,.grammar-table td{ border:1px solid var(--border); padding:.55rem; vertical-align:top; }
+    .empty-state{ display:none; padding:1.25rem; border:1px dashed var(--border); border-radius:var(--radius); background:rgba(0,0,0,.02); color:var(--muted); text-align:center; }
+    .hide-examples .examples{display:none!important;} .hide-deep .deep{display:none!important;}
+    .hide-mistakes .mistakes{display:none!important;} .hide-practice .practice{display:none!important;}
+    .divider{ height:1px; background:var(--border); margin:.75rem 0; }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="13.33" fill="#000"/>
+            <rect y="13.33" width="40" height="13.33" fill="#DD0000"/>
+            <rect y="26.67" width="40" height="13.33" fill="#FFCE00"/>
+          </svg>
+          <h1>Grammar</h1>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn menu-btn" type="button" aria-label="Menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="drawer-backdrop" hidden></div>
+  <aside class="drawer" hidden>
+    <div class="drawer-top">
+      <div class="drawer-title">Menu</div>
+      <button class="icon-btn drawer-close" type="button" aria-label="Close menu">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18"></path><path d="M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <nav class="drawer-nav">
+      <a href="index.html" class="drawer-link">🔤 Verbs</a>
+      <a href="nouns.html" class="drawer-link">📦 Nouns</a>
+      <a href="adjectives.html" class="drawer-link">🎨 Adjectives</a>
+      <a href="adverbs.html" class="drawer-link">💨 Adverbs</a>
+      <a href="practice.html" class="drawer-link">✅ Practice</a>
+      <a href="grammar.html" class="drawer-link drawer-link--active">📖 Grammar</a>
+    </nav>
+  </aside>
+
+  <main class="main-content grammar-page">
+    <div class="container">
+      <section style="margin-bottom:16px;">
+        <h2 style="font-size:1.3rem;font-weight:700;">German Grammar (A1–C2)</h2>
+        <p class="muted" style="font-size:.9rem;">Deep explanations with filters — expand only what you need.</p>
+      </section>
+
+      <div class="grammar-shell" id="app">
+        <aside class="sidebar">
+          <h3>Focus</h3>
+          <div class="muted" style="margin-bottom:.4rem;">Level filter</div>
+          <div id="levelPills">
+            <span class="pill active" data-level="ALL">All</span>
+            <span class="pill" data-level="A1">A1</span>
+            <span class="pill" data-level="A2">A2</span>
+            <span class="pill" data-level="B1">B1</span>
+            <span class="pill" data-level="B2">B2</span>
+            <span class="pill" data-level="C1">C1</span>
+            <span class="pill" data-level="C2">C2</span>
+          </div>
+          <div class="divider"></div>
+          <div class="muted">Topic tags (click to filter)</div>
+          <div id="tagChips" style="margin-top:.35rem;"></div>
+          <div class="divider"></div>
+          <div class="muted">Jump to a visible topic</div>
+          <div class="topic-links" id="topicLinks"></div>
+          <div class="divider"></div>
+          <div class="muted">
+            Suggested path:
+            <div style="margin-top:.35rem;">
+              <div>1) Word order →</div>
+              <div>2) Cases →</div>
+              <div>3) Subordinate clauses →</div>
+              <div>4) Passive/Relative →</div>
+              <div>5) Konjunktiv →</div>
+              <div>6) C1/C2 style</div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="content-area">
+          <div class="controls">
+            <label for="search">Search</label>
+            <input id="search" type="search" placeholder="Search: dative, weil, adjective endings, passive…" />
+            <label for="levelSelect">Level</label>
+            <select id="levelSelect">
+              <option value="ALL">All levels</option>
+              <option value="A1">A1</option>
+              <option value="A2">A2</option>
+              <option value="B1">B1</option>
+              <option value="B2">B2</option>
+              <option value="C1">C1</option>
+              <option value="C2">C2</option>
+            </select>
+            <label class="toggle" title="Hide examples"><input id="tExamples" type="checkbox" /> Hide examples</label>
+            <label class="toggle" title="Hide deep explanations"><input id="tDeep" type="checkbox" /> Hide deep dive</label>
+            <label class="toggle" title="Hide common mistakes"><input id="tMistakes" type="checkbox" /> Hide mistakes</label>
+            <label class="toggle" title="Hide practice prompts"><input id="tPractice" type="checkbox" /> Hide practice</label>
+            <button class="toggle" id="reset" type="button" style="cursor:pointer;">Reset</button>
+          </div>
+          <div class="empty-state" id="empty">No topics match your filters.</div>
+          <div class="topic-grid" id="grid"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="main-footer">
+    <div class="container">
+      <p>&copy; 2026 German Learning App | Built with ❤️ for language learners</p>
+    </div>
+  </footer>
+
+  <script src="topics.js"></script>
+  <script>
+    const menuBtn = document.querySelector(".menu-btn");
+    const drawer = document.querySelector(".drawer");
+    const backdrop = document.querySelector(".drawer-backdrop");
+    const closeBtn = document.querySelector(".drawer-close");
+    function openMenu(){ drawer.hidden=false; backdrop.hidden=false; menuBtn?.setAttribute("aria-expanded","true"); }
+    function closeMenu(){ drawer.hidden=true; backdrop.hidden=true; menuBtn?.setAttribute("aria-expanded","false"); }
+    menuBtn?.addEventListener("click", openMenu);
+    closeBtn?.addEventListener("click", closeMenu);
+    backdrop?.addEventListener("click", closeMenu);
+  </script>
+  <script>
+    (function(){
+      if(!Array.isArray(window.TOPICS)){ console.error("TOPICS not found."); return; }
+      const app=document.getElementById("app"), grid=document.getElementById("grid"), empty=document.getElementById("empty");
+      const search=document.getElementById("search"), levelSelect=document.getElementById("levelSelect");
+      const levelPills=document.getElementById("levelPills"), topicLinks=document.getElementById("topicLinks"), tagChips=document.getElementById("tagChips");
+      const tExamples=document.getElementById("tExamples"), tDeep=document.getElementById("tDeep"), tMistakes=document.getElementById("tMistakes"), tPractice=document.getElementById("tPractice"), reset=document.getElementById("reset");
+      const levels=["A1","A2","B1","B2","C1","C2"];
+      const levelRank=(lvl)=>lvl==="ALL"?-1:levels.indexOf(lvl);
+      let activeTag="ALL";
+      function esc(s){ return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+      function render(){
+        grid.innerHTML=window.TOPICS.map(t=>{
+          const tagBadges=(t.tags||[]).map(x=>`<span class="tag">${esc(x)}</span>`).join("");
+          return `<article class="topic-card topic" id="t-${t.id}" data-level="${t.level}" data-tags="${(t.tags||[]).map(x=>x.toLowerCase()).join(" ")}" data-title="${esc(t.title).toLowerCase()}" data-summary="${esc(t.summary).toLowerCase()}">
+            <div class="topic-head"><h4 class="topic-title">${esc(t.title)}</h4><div class="topic-meta"><span class="tag">${t.level}</span>${tagBadges}</div></div>
+            <p class="topic-summary">${esc(t.summary)}</p>
+            <details class="deep"><summary>Deep explanation</summary>${t.deep||`<div class="box"><p class="muted">No deep explanation yet.</p></div>`}</details>
+            <details class="examples"><summary>Examples</summary>${t.examples||`<div class="box"><p class="muted">No examples yet.</p></div>`}</details>
+            <details class="mistakes"><summary>Common mistakes</summary>${t.mistakes||`<div class="box"><p class="muted">No mistakes list yet.</p></div>`}</details>
+            <details class="practice"><summary>Mini practice</summary>${t.practice||`<div class="box"><p class="muted">No practice prompts yet.</p></div>`}</details>
+          </article>`;
+        }).join("");
+        buildTags(); applyFilters();
+      }
+      function buildTags(){
+        const counts=new Map();
+        window.TOPICS.forEach(t=>(t.tags||[]).forEach(tag=>counts.set(tag,(counts.get(tag)||0)+1)));
+        const sorted=Array.from(counts.entries()).sort((a,b)=>b[1]-a[1]).slice(0,22);
+        tagChips.innerHTML=`<span class="chip ${activeTag==="ALL"?"active":""}" data-tag="ALL">All tags</span>`+sorted.map(([tag,count])=>`<span class="chip ${activeTag===tag?"active":""}" data-tag="${esc(tag)}">${esc(tag)} (${count})</span>`).join("");
+      }
+      function setActivePill(level){ Array.from(levelPills.querySelectorAll(".pill")).forEach(p=>p.classList.toggle("active",p.dataset.level===level)); }
+      function setActiveChip(tag){ activeTag=tag; Array.from(tagChips.querySelectorAll(".chip")).forEach(c=>c.classList.toggle("active",c.dataset.tag===tag)); }
+      function buildSidebarLinks(visibleCards){
+        topicLinks.innerHTML=visibleCards.length?visibleCards.map(card=>{
+          const title=card.querySelector(".topic-title")?.textContent||"Topic";
+          const lvl=card.dataset.level||"";
+          return `<a href="#${card.id}"><span class="muted">${esc(lvl)}</span> — ${esc(title)}</a>`;
+        }).join(""):`<div class="muted" style="padding:.35rem .5rem;">No topics visible.</div>`;
+      }
+      function applyFilters(){
+        const q=(search.value||"").trim().toLowerCase(), lvl=levelSelect.value, minRank=levelRank(lvl);
+        const cards=Array.from(document.querySelectorAll(".topic")); const visible=[]; let shown=0;
+        cards.forEach(card=>{
+          const cRank=levelRank(card.dataset.level||"A1");
+          const hay=(card.dataset.title||"")+" "+(card.dataset.summary||"")+" "+(card.dataset.tags||"");
+          const show=(q?hay.includes(q):true)&&(lvl==="ALL"?true:cRank>=minRank)&&(activeTag==="ALL"?true:(card.dataset.tags||"").includes(activeTag.toLowerCase()));
+          card.hidden=!show; if(show){ shown++; visible.push(card); }
+        });
+        empty.style.display=shown?"none":"block"; buildSidebarLinks(visible);
+      }
+      levelPills.addEventListener("click",(e)=>{ const pill=e.target.closest(".pill"); if(!pill)return; levelSelect.value=pill.dataset.level; setActivePill(pill.dataset.level); applyFilters(); });
+      levelSelect.addEventListener("change",()=>{ setActivePill(levelSelect.value); applyFilters(); });
+      search.addEventListener("input",applyFilters);
+      tagChips.addEventListener("click",(e)=>{ const chip=e.target.closest(".chip"); if(!chip)return; setActiveChip(chip.dataset.tag); applyFilters(); });
+      tExamples.addEventListener("change",()=>app.classList.toggle("hide-examples",tExamples.checked));
+      tDeep.addEventListener("change",()=>app.classList.toggle("hide-deep",tDeep.checked));
+      tMistakes.addEventListener("change",()=>app.classList.toggle("hide-mistakes",tMistakes.checked));
+      tPractice.addEventListener("change",()=>app.classList.toggle("hide-practice",tPractice.checked));
+      reset.addEventListener("click",()=>{ search.value=""; levelSelect.value="ALL"; setActivePill("ALL"); setActiveChip("ALL"); tExamples.checked=false; tDeep.checked=false; tMistakes.checked=false; tPractice.checked=false; app.classList.remove("hide-examples","hide-deep","hide-mistakes","hide-practice"); buildTags(); applyFilters(); });
+      render();
+    })();
+  </script>
+</body>
+</html>
