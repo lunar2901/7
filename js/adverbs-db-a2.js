@@ -1,0 +1,35 @@
+// adverbs-db-a2.js - A2 Level Adverbs (30 core adverbs)
+const adverbsA2 = [
+  {word:"heute",translations:["today"],examples:["Heute lerne ich Deutsch.","Heute ist das Wetter gut.","Ich arbeite heute von zu Hause."]},
+  {word:"morgen",translations:["tomorrow"],examples:["Morgen habe ich frei.","Wir treffen uns morgen.","Morgen rufe ich dich an."]},
+  {word:"gestern",translations:["yesterday"],examples:["Gestern war ich im Kino.","Ich habe ihn gestern gesehen.","Gestern hat es geregnet."]},
+  {word:"bald",translations:["soon"],examples:["Ich komme bald zurück.","Bald beginnt der Kurs.","Wir sehen uns bald."]},
+  {word:"später",translations:["later"],examples:["Ich komme später.","Ruf mich später an.","Später gehen wir essen."]},
+  {word:"früher",translations:["earlier","in the past"],examples:["Früher war ich oft in Berlin.","Komm bitte früher.","Ich stand früher auf."]},
+  {word:"meistens",translations:["mostly","usually"],examples:["Meistens koche ich zu Hause.","Er ist meistens pünktlich.","Wir fahren meistens mit der Bahn."]},
+  {word:"manchmal",translations:["sometimes"],examples:["Manchmal bin ich müde.","Manchmal esse ich draußen.","Es ist manchmal laut hier."]},
+  {word:"oft",translations:["often"],examples:["Ich gehe oft spazieren.","Wir telefonieren oft.","Er kommt oft zu spät."]},
+  {word:"selten",translations:["rarely"],examples:["Ich trinke selten Alkohol.","Sie ist selten krank.","Wir sehen uns selten."]},
+  {word:"nie",translations:["never"],examples:["Ich rauche nie.","Er kommt nie zu spät.","Das vergesse ich nie."]},
+  {word:"immer",translations:["always"],examples:["Ich bin immer ehrlich.","Sie hilft immer.","Er ist immer freundlich."]},
+  {word:"schon",translations:["already"],examples:["Ich habe schon gegessen.","Bist du schon fertig?","Er ist schon unterwegs."]},
+  {word:"noch",translations:["still","yet"],examples:["Ich lerne noch.","Bist du noch da?","Wir haben noch Zeit."]},
+  {word:"gerade",translations:["just","right now"],examples:["Ich bin gerade zu Hause.","Er hat gerade angerufen.","Gerade jetzt habe ich keine Zeit."]},
+  {word:"erst",translations:["only","not until"],examples:["Ich bin erst 20.","Der Film beginnt erst um neun.","Wir kommen erst morgen."]},
+  {word:"wieder",translations:["again"],examples:["Ich mache es wieder.","Er kommt wieder zu spät.","Kannst du das wiederholen?"]},
+  {word:"zusammen",translations:["together"],examples:["Wir gehen zusammen.","Lasst uns zusammen lernen.","Wir wohnen zusammen."]},
+  {word:"allein",translations:["alone"],examples:["Ich esse heute allein.","Er arbeitet lieber allein.","Sie geht allein nach Hause."]},
+  {word:"draußen",translations:["outside"],examples:["Es ist kalt draußen.","Wir warten draußen.","Draußen ist es laut."]},
+  {word:"drinnen",translations:["inside"],examples:["Bleib drinnen.","Drinnen ist es warm.","Wir sitzen drinnen."]},
+  {word:"oben",translations:["upstairs","above"],examples:["Mein Zimmer ist oben.","Oben ist es ruhiger.","Die Tasche liegt oben."]},
+  {word:"unten",translations:["downstairs","below"],examples:["Die Küche ist unten.","Unten ist ein Supermarkt.","Das Fahrrad steht unten."]},
+  {word:"links",translations:["to the left"],examples:["Links ist die Bank.","Geh links.","Die Tür links ist offen."]},
+  {word:"rechts",translations:["to the right"],examples:["Rechts ist der Bahnhof.","Bieg rechts ab.","Das Café ist rechts."]},
+  {word:"vielleicht",translations:["maybe","perhaps"],examples:["Vielleicht komme ich später.","Vielleicht regnet es morgen.","Er ist vielleicht zu Hause."]},
+  {word:"natürlich",translations:["of course","naturally"],examples:["Natürlich helfe ich dir.","Das ist natürlich wichtig.","Natürlich komme ich mit."]},
+  {word:"leider",translations:["unfortunately"],examples:["Leider habe ich keine Zeit.","Leider ist der Zug verspätet.","Leider kann ich nicht kommen."]},
+  {word:"eigentlich",translations:["actually","really"],examples:["Eigentlich wollte ich bleiben.","Wie heißt du eigentlich?","Eigentlich ist es nicht schwer."]},
+  {word:"genau",translations:["exactly","precisely"],examples:["Genau so ist es.","Ich komme genau um acht.","Das ist genau mein Problem."]}
+];
+
+export default adverbsA2;

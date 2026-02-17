@@ -1,0 +1,35 @@
+// adjectives-db-a2.js - A2 Level Adjectives (30 core adjectives)
+const adjectivesA2 = [
+  {word:"pünktlich",comparative:"pünktlicher",superlative:"am pünktlichsten",translations:["punctual","on time"],examples:["Bitte sei pünktlich.","Der Bus ist heute pünktlich.","Ich komme immer pünktlich zur Arbeit."]},
+  {word:"hungrig",comparative:"hungriger",superlative:"am hungrigsten",translations:["hungry"],examples:["Ich bin hungrig.","Nach dem Sport bin ich hungrig.","Bist du auch hungrig?"]},
+  {word:"durstig",comparative:"durstiger",superlative:"am durstigsten",translations:["thirsty"],examples:["Ich bin durstig.","Nach dem Lauf war ich durstig.","Hast du Wasser? Ich bin durstig."]},
+  {word:"müde",comparative:"müder",superlative:"am müdesten",translations:["tired"],examples:["Ich bin müde.","Heute Abend bin ich sehr müde.","Nach der Reise war er müde."]},
+  {word:"glücklich",comparative:"glücklicher",superlative:"am glücklichsten",translations:["happy"],examples:["Ich bin glücklich.","Sie ist heute glücklich.","Das macht mich wirklich glücklich."]},
+  {word:"traurig",comparative:"trauriger",superlative:"am traurigsten",translations:["sad"],examples:["Der Film war traurig.","Sie ist traurig wegen der Nachricht.","Ich werde traurig, wenn ich allein bin."]},
+  {word:"wichtig",comparative:"wichtiger",superlative:"am wichtigsten",translations:["important"],examples:["Das ist wichtig.","Gesundheit ist wichtiger als Geld.","Pünktlichkeit ist am wichtigsten."]},
+  {word:"nützlich",comparative:"nützlicher",superlative:"am nützlichsten",translations:["useful"],examples:["Diese App ist nützlich.","Ein Wörterbuch ist nützlicher als ein Übersetzer.","Der Tipp war am nützlichsten."]},
+  {word:"praktisch",comparative:"praktischer",superlative:"am praktischsten",translations:["practical","handy"],examples:["Das ist praktisch.","Eine Tasche mit Rollen ist praktischer.","Online-Tickets sind am praktischsten."]},
+  {word:"anstrengend",comparative:"anstrengender",superlative:"am anstrengendsten",translations:["exhausting","strenuous"],examples:["Die Arbeit ist anstrengend.","Der Umzug war anstrengender als gedacht.","Die Wohnungssuche ist am anstrengendsten."]},
+  {word:"gefährlich",comparative:"gefährlicher",superlative:"am gefährlichsten",translations:["dangerous"],examples:["Das ist gefährlich.","Im Winter ist es gefährlicher zu fahren.","Diese Straße ist am gefährlichsten."]},
+  {word:"sicher",comparative:"sicherer",superlative:"am sichersten",translations:["safe","certain"],examples:["Hier ist es sicher.","Mit Helm ist Radfahren sicherer.","Am sichersten ist es zu Hause."]},
+  {word:"laut",comparative:"lauter",superlative:"am lautesten",translations:["loud"],examples:["Die Musik ist laut.","Der Nachbar ist lauter als gestern.","Im Club ist es am lautesten."]},
+  {word:"leise",comparative:"leiser",superlative:"am leisesten",translations:["quiet"],examples:["Bitte sei leise.","Heute ist es leiser im Büro.","Nachts ist es am leisesten."]},
+  {word:"sauber",comparative:"sauberer",superlative:"am saubersten",translations:["clean"],examples:["Das Bad ist sauber.","Die Küche ist sauberer als vorher.","Am saubersten ist es nach dem Putzen."]},
+  {word:"schmutzig",comparative:"schmutziger",superlative:"am schmutzigsten",translations:["dirty"],examples:["Die Schuhe sind schmutzig.","Nach dem Regen sind die Straßen schmutziger.","Nach dem Festival ist es am schmutzigsten."]},
+  {word:"frei",comparative:"freier",superlative:"am freisten",translations:["free","available"],examples:["Ich habe heute frei.","Am Wochenende bin ich freier.","Am Freitag bin ich am freisten."]},
+  {word:"besetzt",comparative:"besetzter",superlative:"am besetztesten",translations:["occupied","taken"],examples:["Der Platz ist besetzt.","Das Hotel ist besetzter als letzte Woche.","Im Sommer ist es am besetztesten."]},
+  {word:"interessant",comparative:"interessanter",superlative:"am interessantesten",translations:["interesting"],examples:["Das Buch ist interessant.","Der Podcast ist interessanter.","Die Doku war am interessantesten."]},
+  {word:"langweilig",comparative:"langweiliger",superlative:"am langweiligsten",translations:["boring"],examples:["Der Unterricht ist langweilig.","Der Film war langweiliger als erwartet.","Mathe fand ich am langweiligsten."]},
+  {word:"günstig",comparative:"günstiger",superlative:"am günstigsten",translations:["good value","cheap (good deal)"],examples:["Das Angebot ist günstig.","Online ist es oft günstiger.","Am günstigsten ist es im Sale."]},
+  {word:"teuer",comparative:"teurer",superlative:"am teuersten",translations:["expensive"],examples:["Das Hotel ist teuer.","Im Zentrum ist es teurer.","Am teuersten ist es in der Hochsaison."]},
+  {word:"kaputt",comparative:"kaputter",superlative:"am kaputtesten",translations:["broken"],examples:["Mein Handy ist kaputt.","Der alte Stuhl ist kaputter.","Am kaputtesten ist das Fahrrad."]},
+  {word:"gesund",comparative:"gesünder",superlative:"am gesündesten",translations:["healthy"],examples:["Obst ist gesund.","Selbst gekocht ist gesünder.","Am gesündesten ist frisches Gemüse."]},
+  {word:"krank",comparative:"kränker",superlative:"am kränksten",translations:["ill","sick"],examples:["Ich bin krank.","Heute ist er kränker als gestern.","Im Winter bin ich am kränksten."]},
+  {word:"bereit",comparative:"bereiter",superlative:"am bereitesten",translations:["ready"],examples:["Ich bin bereit.","Bist du bereit zu gehen?","Wir sind alle bereit für die Prüfung."]},
+  {word:"freundlich",comparative:"freundlicher",superlative:"am freundlichsten",translations:["friendly"],examples:["Die Verkäuferin ist freundlich.","Die Nachbarn sind freundlicher als früher.","Am freundlichsten ist er morgens."]},
+  {word:"unfreundlich",comparative:"unfreundlicher",superlative:"am unfreundlichsten",translations:["unfriendly"],examples:["Der Ton war unfreundlich.","Der Service war unfreundlicher als erwartet.","Am unfreundlichsten war der Mann am Schalter."]},
+  {word:"allein",comparative:"alleiner",superlative:"am alleinsten",translations:["alone"],examples:["Ich bin heute allein.","Er fühlt sich abends alleiner.","Am alleinsten ist man ohne Freunde."]},
+  {word:"gemeinsam",comparative:"gemeinsamer",superlative:"am gemeinsamsten",translations:["together","shared"],examples:["Wir kochen gemeinsam.","Gemeinsam geht es leichter.","Wir entscheiden gemeinsam über den Plan."]}
+];
+
+export default adjectivesA2;

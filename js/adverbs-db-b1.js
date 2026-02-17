@@ -1,0 +1,35 @@
+// adverbs-db-b1.js - B1 Level Adverbs (30 core adverbs)
+const adverbsB1 = [
+  {word:"deshalb",translations:["therefore"],examples:["Es regnet, deshalb bleibe ich zu Hause.","Ich bin müde, deshalb gehe ich früh ins Bett.","Er hatte keine Zeit, deshalb kam er nicht."]},
+  {word:"trotzdem",translations:["nevertheless"],examples:["Es ist kalt, trotzdem gehe ich joggen.","Er war krank, trotzdem arbeitete er.","Sie hatte Angst, trotzdem sprach sie."]},
+  {word:"außerdem",translations:["besides","in addition"],examples:["Ich lerne Deutsch, außerdem Englisch.","Außerdem ist das Angebot günstig.","Er ist nett und außerdem hilfsbereit."]},
+  {word:"inzwischen",translations:["meanwhile","by now"],examples:["Inzwischen ist es dunkel.","Ich warte, inzwischen lese ich.","Viel ist inzwischen passiert."]},
+  {word:"besonders",translations:["especially"],examples:["Ich mag besonders Pizza.","Das ist besonders wichtig.","Besonders im Winter ist es teuer."]},
+  {word:"wahrscheinlich",translations:["probably"],examples:["Er kommt wahrscheinlich später.","Wahrscheinlich regnet es morgen.","Das ist wahrscheinlich richtig."]},
+  {word:"ungefähr",translations:["approximately"],examples:["Es kostet ungefähr 20 Euro.","Ich warte seit ungefähr einer Stunde.","Ungefähr zehn Leute sind da."]},
+  {word:"wenigstens",translations:["at least"],examples:["Wenigstens bist du da.","Er hat wenigstens versucht.","Gib mir wenigstens einen Tag."]},
+  {word:"wirklich",translations:["really","truly"],examples:["Das ist wirklich gut.","Ich verstehe dich wirklich.","War das wirklich nötig?"]},
+  {word:"eigentlich",translations:["actually"],examples:["Eigentlich wollte ich gehen.","Wie heißt du eigentlich?","Eigentlich ist es nicht schwer."]},
+  {word:"zuerst",translations:["first"],examples:["Zuerst esse ich, dann arbeite ich.","Zuerst lesen wir den Text.","Zuerst musst du dich anmelden."]},
+  {word:"danach",translations:["afterwards"],examples:["Danach gehen wir nach Hause.","Ich telefoniere, danach koche ich.","Danach war er zufrieden."]},
+  {word:"vorher",translations:["beforehand"],examples:["Sag mir vorher Bescheid.","Vorher hatte ich keine Zeit.","Wir kaufen vorher Tickets."]},
+  {word:"in der Regel",translations:["as a rule","generally"],examples:["In der Regel bin ich pünktlich.","In der Regel ist der Kurs voll.","In der Regel hilft ein Plan."]},
+  {word:"auf jeden Fall",translations:["definitely"],examples:["Ich komme auf jeden Fall.","Das mache ich auf jeden Fall.","Auf jeden Fall ist das besser."]},
+  {word:"zum Glück",translations:["luckily"],examples:["Zum Glück war der Zug pünktlich.","Zum Glück habe ich Hilfe bekommen.","Zum Glück ist nichts passiert."]},
+  {word:"leider",translations:["unfortunately"],examples:["Leider kann ich nicht kommen.","Leider ist es zu spät.","Leider habe ich es vergessen."]},
+  {word:"genauso",translations:["just as","the same way"],examples:["Mach es genauso.","Ich denke genauso.","Es ist genauso wie gestern."]},
+  {word:"anders",translations:["differently"],examples:["Heute mache ich es anders.","Er sieht das anders.","Wir müssen anders planen."]},
+  {word:"sowieso",translations:["anyway"],examples:["Ich gehe sowieso nach Hause.","Das ist sowieso klar.","Er kommt sowieso zu spät."]},
+  {word:"nämlich",translations:["namely"],examples:["Ich kann nicht, nämlich ich arbeite.","Das ist schwer, nämlich sehr lang.","Ich bleibe hier, nämlich es regnet."]},
+  {word:"dadurch",translations:["through that","as a result"],examples:["Dadurch spare ich Zeit.","Er lernt, dadurch wird er besser.","Dadurch entstehen Probleme."]},
+  {word:"daher",translations:["therefore","hence"],examples:["Es ist spät, daher gehe ich.","Er war krank, daher fehlte er.","Wir sind müde, daher machen wir Pause."]},
+  {word:"stattdessen",translations:["instead"],examples:["Ich trinke Wasser, statt­dessen keinen Kaffee.","Wir bleiben zu Hause, statt­dessen ins Kino zu gehen.","Er ruft an, statt­dessen zu schreiben."]},
+  {word:"mittlerweile",translations:["by now","meanwhile"],examples:["Mittlerweile kenne ich viele Leute.","Mittlerweile ist es besser.","Er wohnt mittlerweile in Köln."]},
+  {word:"bisher",translations:["so far","up to now"],examples:["Bisher hat alles geklappt.","Ich habe bisher nichts gehört.","Bisher war der Kurs gut."]},
+  {word:"endlich",translations:["finally"],examples:["Endlich habe ich Urlaub!","Endlich ist der Bus da.","Wir sind endlich fertig."]},
+  {word:"sofort",translations:["immediately"],examples:["Komm sofort!","Ich antworte sofort.","Sofort nach dem Kurs gehe ich heim."]},
+  {word:"plötzlich",translations:["suddenly"],examples:["Plötzlich war es still.","Plötzlich hat es angefangen zu regnen.","Er war plötzlich weg."]},
+  {word:"wahrscheinlich nicht",translations:["probably not"],examples:["Er kommt wahrscheinlich nicht.","Das klappt wahrscheinlich nicht.","Wahrscheinlich nicht heute, sondern morgen."]}
+];
+
+export default adverbsB1;

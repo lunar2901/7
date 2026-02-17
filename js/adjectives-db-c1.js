@@ -1,0 +1,35 @@
+// adjectives-db-c1.js - C1 Level Adjectives (30 advanced adjectives)
+const adjectivesC1 = [
+  {word:"wesentlich",comparative:"wesentlicher",superlative:"am wesentlichsten",translations:["essential"],examples:["Das ist ein wesentlicher Punkt.","Wesentliche Informationen fehlen.","Für den Erfolg ist Kommunikation wesentlich."]},
+  {word:"erheblich",comparative:"erheblicher",superlative:"am erheblichsten",translations:["considerable","significant"],examples:["Die Kosten sind erheblich.","Es gibt erhebliche Unterschiede.","Der Schaden war erheblich größer als erwartet."]},
+  {word:"nachhaltig",comparative:"nachhaltiger",superlative:"am nachhaltigsten",translations:["sustainable","lasting"],examples:["Wir brauchen nachhaltige Lösungen.","Die Wirkung ist nachhaltiger als gedacht.","Am nachhaltigsten ist weniger Konsum."]},
+  {word:"vielfältig",comparative:"vielfältiger",superlative:"am vielfältigsten",translations:["diverse","varied"],examples:["Das Angebot ist vielfältig.","Die Perspektiven werden vielfältiger.","Am vielfältigsten ist das Programm online."]},
+  {word:"angemessen",comparative:"angemessener",superlative:"am angemessensten",translations:["appropriate"],examples:["Das ist angemessen.","Eine angemessenere Reaktion wäre besser gewesen.","Am angemessensten ist ein ruhiges Gespräch."]},
+  {word:"relevant",comparative:"relevanter",superlative:"am relevantesten",translations:["relevant"],examples:["Die Frage ist relevant.","Relevantere Daten fehlen.","Am relevantesten sind die Fakten."]},
+  {word:"komplex",comparative:"komplexer",superlative:"am komplexesten",translations:["complex"],examples:["Das Problem ist komplex.","Die Lage wird komplexer.","Am komplexesten ist die Umsetzung."]},
+  {word:"effizient",comparative:"effizienter",superlative:"am effizientesten",translations:["efficient"],examples:["Wir arbeiten effizient.","Effizientere Prozesse sparen Zeit.","Am effizientesten ist klare Planung."]},
+  {word:"grundsätzlich",comparative:"grundsätzlicher",superlative:"am grundsätzlichsten",translations:["fundamental","in principle"],examples:["Ich bin grundsätzlich einverstanden.","Das ist eine grundsätzliche Frage.","Grundsätzlich ist das möglich."]},
+  {word:"überzeugend",comparative:"überzeugender",superlative:"am überzeugendsten",translations:["convincing"],examples:["Das Argument ist überzeugend.","Ihre Begründung war überzeugender.","Am überzeugendsten sind konkrete Beispiele."]},
+  {word:"konsequent",comparative:"konsequenter",superlative:"am konsequentesten",translations:["consistent","determined"],examples:["Er handelt konsequent.","Konsequenteres Vorgehen hilft.","Am konsequentesten ist sie bei Regeln."]},
+  {word:"kritisch",comparative:"kritischer",superlative:"am kritischsten",translations:["critical"],examples:["Die Lage ist kritisch.","Das Thema wird kritischer diskutiert.","Am kritischsten ist der Zeitplan."]},
+  {word:"transparent",comparative:"transparenter",superlative:"am transparentesten",translations:["transparent","clear"],examples:["Der Prozess ist transparent.","Wir brauchen transparentere Regeln.","Am transparentesten sind offene Daten."]},
+  {word:"ambivalent",comparative:"ambivalenter",superlative:"am ambivalentesten",translations:["ambivalent","mixed"],examples:["Seine Haltung ist ambivalent.","Ich fühle mich ambivalenter als früher.","Am ambivalentesten ist die öffentliche Meinung."]},
+  {word:"vage",comparative:"vager",superlative:"am vagesten",translations:["vague"],examples:["Die Aussage ist vage.","Die Erklärung war vager als nötig.","Am vagesten sind die Versprechen."]},
+  {word:"präzise",comparative:"präziser",superlative:"am präzisesten",translations:["precise"],examples:["Bitte sei präzise.","Eine präzisere Formulierung hilft.","Am präzisesten sind Zahlen."]},
+  {word:"objektiv",comparative:"objektiver",superlative:"am objektivsten",translations:["objective"],examples:["Wir bleiben objektiv.","Objektivere Kriterien sind nötig.","Am objektivsten ist eine Messung."]},
+  {word:"subtil",comparative:"subtiler",superlative:"am subtilsten",translations:["subtle"],examples:["Das ist eine subtile Kritik.","Der Unterschied ist subtiler.","Am subtilsten wirkt Ironie."]},
+  {word:"robust",comparative:"robuster",superlative:"am robustesten",translations:["robust"],examples:["Das System ist robust.","Eine robustere Lösung ist sicherer.","Am robustesten sind einfache Prozesse."]},
+  {word:"fragil",comparative:"fragiler",superlative:"am fragilsten",translations:["fragile"],examples:["Das Vertrauen ist fragil.","Die Situation wird fragiler.","Am fragilsten ist der Kompromiss."]},
+  {word:"zeitnah",comparative:"zeitnäher",superlative:"am zeitnächsten",translations:["timely","soon"],examples:["Wir brauchen eine zeitnahe Antwort.","Zeitnähere Updates helfen.","Am zeitnächsten ist eine kurze Rückmeldung."]},
+  {word:"langfristig",comparative:"langfristiger",superlative:"am langfristigsten",translations:["long-term"],examples:["Wir planen langfristig.","Langfristigere Ziele motivieren.","Am langfristigsten wirkt Bildung."]},
+  {word:"kurzfristig",comparative:"kurzfristiger",superlative:"am kurzfristigsten",translations:["short-term"],examples:["Kurzfristig ist das möglich.","Kurzfristigere Lösungen sind teuer.","Am kurzfristigsten reagieren wir auf Krisen."]},
+  {word:"kontrovers",comparative:"kontroverser",superlative:"am kontroversesten",translations:["controversial"],examples:["Das Thema ist kontrovers.","Die Debatte wird kontroverser.","Am kontroversesten sind moralische Fragen."]},
+  {word:"plausibel",comparative:"plausibler",superlative:"am plausibelsten",translations:["plausible"],examples:["Die Erklärung ist plausibel.","Eine plausiblere Begründung fehlt.","Am plausibelsten ist die einfache Lösung."]},
+  {word:"konsistent",comparative:"konsistenter",superlative:"am konsistentesten",translations:["consistent"],examples:["Die Daten sind konsistent.","Konsistentere Regeln helfen.","Am konsistentesten ist das Modell."]},
+  {word:"inkonsequent",comparative:"inkonsequenter",superlative:"am inkonsequentesten",translations:["inconsistent"],examples:["Das Verhalten ist inkonsequent.","Die Politik wirkt inkonsequenter.","Am inkonsequentesten sind die Ausnahmen."]},
+  {word:"differenziert",comparative:"differenzierter",superlative:"am differenziertesten",translations:["nuanced","differentiated"],examples:["Wir brauchen eine differenzierte Sicht.","Differenziertere Argumente überzeugen.","Am differenziertesten ist die Analyse."]},
+  {word:"einschlägig",comparative:"einschlägiger",superlative:"am einschlägigsten",translations:["relevant (esp. experience)"],examples:["Er hat einschlägige Erfahrung.","Einschlägigere Beispiele wären besser.","Am einschlägigsten sind Praxisfälle."]},
+  {word:"unabdingbar",comparative:"unabdingbarer",superlative:"am unabdingbarsten",translations:["indispensable"],examples:["Sicherheit ist unabdingbar.","Eine klare Strategie ist unabdingbar.","Am unabdingbarsten ist Vertrauen im Team."]}
+];
+
+export default adjectivesC1;

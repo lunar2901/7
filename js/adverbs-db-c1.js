@@ -1,0 +1,35 @@
+// adverbs-db-c1.js - C1 Level Adverbs (30 advanced adverbs)
+const adverbsC1 = [
+  {word:"folglich",translations:["consequently"],examples:["Er war krank, folglich blieb er zu Hause.","Die Zahlen sind schlecht, folglich müssen wir sparen.","Sie lernte intensiv, folglich bestand sie."]},
+  {word:"hingegen",translations:["on the other hand"],examples:["Ich mag Kaffee, er hingegen Tee.","Das ist günstig, jenes hingegen teuer.","Sie ist ruhig, ihr Bruder hingegen laut."]},
+  {word:"demnach",translations:["accordingly"],examples:["Er hat viel gelernt, demnach ist er vorbereitet.","Es regnet, demnach bleiben wir drinnen.","Sie war krank, demnach fehlte sie."]},
+  {word:"allerdings",translations:["however"],examples:["Das klingt gut, allerdings ist es teuer.","Ich komme, allerdings erst später.","Er wollte helfen, allerdings hatte er keine Zeit."]},
+  {word:"keineswegs",translations:["by no means"],examples:["Das ist keineswegs einfach.","Ich bin keineswegs überzeugt.","Das war keineswegs klar."]},
+  {word:"durchaus",translations:["certainly","quite"],examples:["Das ist durchaus möglich.","Ich bin durchaus zufrieden.","Das kann durchaus stimmen."]},
+  {word:"weitgehend",translations:["largely"],examples:["Das ist weitgehend korrekt.","Wir sind weitgehend fertig.","Das Problem ist weitgehend gelöst."]},
+  {word:"zunehmend",translations:["increasingly"],examples:["Die Preise steigen zunehmend.","Er wird zunehmend nervös.","Zunehmend fehlt uns Zeit."]},
+  {word:"letztlich",translations:["ultimately"],examples:["Letztlich entscheidet das Team.","Letztlich war es die richtige Wahl.","Letztlich zählt die Qualität."]},
+  {word:"zugleich",translations:["at the same time"],examples:["Er ist Chef und zugleich Mentor.","Sie lachte und weinte zugleich.","Das ist schwierig und zugleich spannend."]},
+  {word:"dementsprechend",translations:["accordingly"],examples:["Dementsprechend handeln wir vorsichtig.","Die Lage ist ernst, dementsprechend reagieren wir.","Dementsprechend wurden Regeln angepasst."]},
+  {word:"dennoch",translations:["nevertheless"],examples:["Es ist riskant, dennoch versuchen wir es.","Er ist müde, dennoch arbeitet er weiter.","Die Kritik ist hart, dennoch fair."]},
+  {word:"infolgedessen",translations:["as a result"],examples:["Die Nachfrage sank, infolgedessen wurden Stellen gestrichen.","Er verspätete sich, infolgedessen begann das Meeting später.","Der Server fiel aus, infolgedessen gab es Ausfälle."]},
+  {word:"mitunter",translations:["sometimes"],examples:["Mitunter ist es schwer, objektiv zu bleiben.","Mitunter passieren Fehler.","Mitunter hilft ein Perspektivwechsel."]},
+  {word:"allenfalls",translations:["at most"],examples:["Das ist allenfalls eine Übergangslösung.","Allenfalls ein kleiner Fehler ist passiert.","Allenfalls morgen kann ich kommen."]},
+  {word:"sukzessive",translations:["gradually"],examples:["Wir verbessern den Prozess sukzessive.","Die Kosten steigen sukzessive.","Sukzessive wird das System stabiler."]},
+  {word:"prinzipiell",translations:["in principle"],examples:["Prinzipiell stimme ich zu.","Das ist prinzipiell möglich.","Prinzipiell gibt es zwei Optionen."]},
+  {word:"in erster Linie",translations:["primarily"],examples:["In erster Linie zählt Qualität.","In erster Linie geht es um Sicherheit.","In erster Linie müssen wir planen."]},
+  {word:"unter Umständen",translations:["under certain circumstances"],examples:["Unter Umständen ist das sinnvoll.","Unter Umständen dauert es länger.","Unter Umständen klappt es nicht."]},
+  {word:"gegebenenfalls",translations:["if necessary"],examples:["Gegebenenfalls ändern wir den Plan.","Ruf mich gegebenenfalls an.","Gegebenenfalls muss man neu starten."]},
+  {word:"maßgeblich",translations:["significantly","decisively"],examples:["Er hat maßgeblich dazu beigetragen.","Das Ergebnis hängt maßgeblich von Daten ab.","Maßgeblich ist die Umsetzung."]},
+  {word:"ausnahmslos",translations:["without exception"],examples:["Die Regeln gelten ausnahmslos.","Ausnahmslos alle müssen zustimmen.","Wir halten uns ausnahmslos daran."]},
+  {word:"unweigerlich",translations:["inevitably"],examples:["Ohne Planung kommt es unweigerlich zu Fehlern.","Das führt unweigerlich zu Konflikten.","Unweigerlich entstehen Kosten."]},
+  {word:"einerseits",translations:["on the one hand"],examples:["Einerseits ist es teuer, andererseits nützlich.","Einerseits verstehe ich dich, andererseits nicht.","Einerseits braucht es Zeit, andererseits Geduld."]},
+  {word:"andererseits",translations:["on the other hand"],examples:["Andererseits ist es eine Chance.","Andererseits gibt es Alternativen.","Andererseits ist das Risiko hoch."]},
+  {word:"im Übrigen",translations:["incidentally","besides"],examples:["Im Übrigen bin ich einverstanden.","Im Übrigen war das Meeting gut.","Im Übrigen ist das nicht relevant."]},
+  {word:"schlichtweg",translations:["simply","plainly"],examples:["Das ist schlichtweg falsch.","Ich habe schlichtweg keine Zeit.","Schlichtweg fehlt die Grundlage."]},
+  {word:"mitnichten",translations:["by no means"],examples:["Das ist mitnichten sicher.","Er ist mitnichten verantwortlich.","Mitnichten stimmt das."]},
+  {word:"allen Ernstes",translations:["seriously"],examples:["Meinst du das allen Ernstes?","Er behauptet das allen Ernstes.","Allen Ernstes: Das ist riskant."]},
+  {word:"beileibe",translations:["far from"],examples:["Das ist beileibe nicht einfach.","Er ist beileibe kein Experte.","Beileibe nicht alles ist geklärt."]}
+];
+
+export default adverbsC1;

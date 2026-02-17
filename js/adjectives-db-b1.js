@@ -1,0 +1,35 @@
+// adjectives-db-b1.js - B1 Level Adjectives (30 core adjectives)
+const adjectivesB1 = [
+  {word:"notwendig",comparative:"notwendiger",superlative:"am notwendigsten",translations:["necessary"],examples:["Das ist notwendig.","Eine Pause ist notwendig.","Schlaf ist für Kinder notwendig."]},
+  {word:"möglich",comparative:"möglicher",superlative:"am möglichsten",translations:["possible"],examples:["Ist das möglich?","Eine Lösung ist möglich.","So schnell wie möglich!"]},
+  {word:"unterschiedlich",comparative:"unterschiedlicher",superlative:"am unterschiedlichsten",translations:["different","varied"],examples:["Die Meinungen sind unterschiedlich.","Wir haben unterschiedliche Pläne.","Die Ergebnisse sind sehr unterschiedlich."]},
+  {word:"erfolgreich",comparative:"erfolgreicher",superlative:"am erfolgreichsten",translations:["successful"],examples:["Sie ist erfolgreich.","Das Projekt war erfolgreich.","Er arbeitet erfolgreich im Team."]},
+  {word:"bereit",comparative:"bereiter",superlative:"am bereitesten",translations:["ready","prepared"],examples:["Ich bin bereit.","Wir sind bereit zu starten.","Bist du bereit für das Gespräch?"]},
+  {word:"gemeinsam",comparative:"gemeinsamer",superlative:"am gemeinsamsten",translations:["together","joint"],examples:["Wir finden gemeinsam eine Lösung.","Das ist ein gemeinsames Ziel.","Gemeinsame Arbeit spart Zeit."]},
+  {word:"privat",comparative:"privater",superlative:"am privatesten",translations:["private"],examples:["Das ist privat.","Ein privates Treffen.","Er hält sein Leben privat."]},
+  {word:"öffentlich",comparative:"öffentlicher",superlative:"am öffentlichsten",translations:["public"],examples:["Das ist öffentlich.","Öffentliche Verkehrsmittel sind teuer geworden.","Die Sitzung ist öffentlich."]},
+  {word:"klar",comparative:"klarer",superlative:"am klarsten",translations:["clear"],examples:["Die Antwort ist klar.","Sprich bitte klar.","Mir ist klar, was du meinst."]},
+  {word:"wahrscheinlich",comparative:"wahrscheinlicher",superlative:"am wahrscheinlichsten",translations:["probable","likely"],examples:["Er kommt wahrscheinlich später.","Das ist wahrscheinlich richtig.","Am wahrscheinlichsten regnet es."]},
+  {word:"typisch",comparative:"typischer",superlative:"am typischsten",translations:["typical"],examples:["Das ist typisch für ihn.","Typische Fehler passieren am Anfang.","Das ist ein typisches Problem."]},
+  {word:"selbstständig",comparative:"selbstständiger",superlative:"am selbstständigsten",translations:["independent","self-employed (context)"],examples:["Sie arbeitet selbstständig.","Kinder werden selbstständiger.","Er lebt sehr selbstständig."]},
+  {word:"zuständig",comparative:"zuständiger",superlative:"am zuständigsten",translations:["responsible (in charge)"],examples:["Wer ist zuständig?","Die Abteilung ist zuständig.","Dafür bin ich nicht zuständig."]},
+  {word:"zufrieden",comparative:"zufriedener",superlative:"am zufriedensten",translations:["satisfied"],examples:["Ich bin zufrieden.","Die Kunden sind zufriedener als früher.","Am zufriedensten bin ich nach dem Urlaub."]},
+  {word:"unzufrieden",comparative:"unzufriedener",superlative:"am unzufriedensten",translations:["dissatisfied"],examples:["Er ist unzufrieden.","Sie wirkt unzufriedener als gestern.","Viele waren am unzufriedensten mit dem Service."]},
+  {word:"flexibel",comparative:"flexibler",superlative:"am flexibelsten",translations:["flexible"],examples:["Meine Arbeitszeit ist flexibel.","Flexible Lösungen helfen.","Am flexibelsten bin ich am Wochenende."]},
+  {word:"verlässlich",comparative:"verlässlicher",superlative:"am verlässlichsten",translations:["reliable"],examples:["Er ist verlässlich.","Eine verlässlichere Person kenne ich nicht.","Am verlässlichsten ist unser Team."]},
+  {word:"unsicher",comparative:"unsicherer",superlative:"am unsichersten",translations:["uncertain","insecure"],examples:["Ich bin unsicher.","Sie ist unsicherer vor Prüfungen.","Am unsichersten bin ich im Interview."]},
+  {word:"mutig",comparative:"mutiger",superlative:"am mutigsten",translations:["brave"],examples:["Das war mutig.","Sie wird mutiger.","Am mutigsten war er in der Krise."]},
+  {word:"ehrlich",comparative:"ehrlicher",superlative:"am ehrlichsten",translations:["honest"],examples:["Sei ehrlich.","Er ist ehrlicher als früher.","Am ehrlichsten ist sie im Gespräch."]},
+  {word:"geduldig",comparative:"geduldiger",superlative:"am geduldigsten",translations:["patient"],examples:["Du musst geduldig sein.","Er ist geduldiger mit Kindern.","Am geduldigsten ist sie beim Erklären."]},
+  {word:"ungeduldig",comparative:"ungeduldiger",superlative:"am ungeduldigsten",translations:["impatient"],examples:["Warte, sei nicht ungeduldig.","Er wird ungeduldiger.","Am ungeduldigsten ist sie im Stau."]},
+  {word:"gründlich",comparative:"gründlicher",superlative:"am gründlichsten",translations:["thorough"],examples:["Er arbeitet gründlich.","Eine gründlichere Kontrolle ist nötig.","Am gründlichsten putzt sie die Küche."]},
+  {word:"kompliziert",comparative:"komplizierter",superlative:"am kompliziertesten",translations:["complicated"],examples:["Das ist kompliziert.","Die Regeln sind komplizierter als gedacht.","Am kompliziertesten ist die Grammatik."]},
+  {word:"einfach",comparative:"einfacher",superlative:"am einfachsten",translations:["simple","easy"],examples:["Die Aufgabe ist einfach.","Online ist es einfacher.","Am einfachsten ist es mit einem Plan."]},
+  {word:"beeindruckend",comparative:"beeindruckender",superlative:"am beeindruckendsten",translations:["impressive"],examples:["Das Ergebnis ist beeindruckend.","Seine Rede war beeindruckender.","Am beeindruckendsten war die Zusammenarbeit."]},
+  {word:"relevant",comparative:"relevanter",superlative:"am relevantesten",translations:["relevant"],examples:["Das ist relevant.","Relevante Infos fehlen.","Ist das relevant für den Antrag?"]},
+  {word:"persönlich",comparative:"persönlicher",superlative:"am persönlichsten",translations:["personal"],examples:["Das ist persönlich.","Ein persönlicher Brief wirkt besser.","Am persönlichsten ist ein Gespräch."]},
+  {word:"gewöhnlich",comparative:"gewöhnlicher",superlative:"am gewöhnlichsten",translations:["usual","ordinary"],examples:["Das ist gewöhnlich.","Gewöhnliche Fehler passieren oft.","Ich stehe gewöhnlich um sieben auf."]},
+  {word:"außergewöhnlich",comparative:"außergewöhnlicher",superlative:"am außergewöhnlichsten",translations:["extraordinary"],examples:["Das ist außergewöhnlich.","Eine außergewöhnlich gute Idee.","Am außergewöhnlichsten war ihre Leistung."]}
+];
+
+export default adjectivesB1;
