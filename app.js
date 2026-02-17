@@ -322,33 +322,30 @@ function isNonEmptyString(x) {
 /* ========================= Card renderer (Tabs + Collapsible varieties) ========================= */
 
 function createVerbCard(v, idx) {
-  injectVerbCardStylesOnce();
-
   const card = document.createElement('div');
   card.className = 'verb-card';
 
-  const infinitive = getVerbBase(v);     // keep for ids/search/save
+  const infinitive = getVerbBase(v); // your DB base (e.g. "gehen")
   const saveId = `verbs:${currentLevel}:${infinitive}`;
 
   const typeText = getTypeText(v);
-  const forms = getForms(v);
+  const forms = getForms(v); // present will become "gehe" via derived[0]
   const translations = getTranslations(v);
   const variants = getVariants(v);
 
-  // Display base as PRESENT form (ich-form), but keep infinitive as subtitle
+  // Base shown as PRESENT form
   const displayBase = (forms.present && forms.present !== '—') ? forms.present : infinitive;
 
-  // Derived as plain text (not pills)
+  // Derived shown as plain text
   const mainDerived = Array.isArray(v.derived) ? v.derived : [];
   const derivedText = mainDerived.length ? mainDerived.join(' | ') : '';
 
-  // Non-collapsible varieties
-  const varietiesHtml = (Array.isArray(variants) ? variants : []).map((vr) => {
+  const varietiesHtml = (Array.isArray(variants) ? variants : []).map(vr => {
     if (typeof vr === 'string') {
       return `
-        <div class="variety-block">
-          <div class="variety-title">${escapeHtml(vr)}</div>
-        </div>
+        <li>
+          <div><strong>${escapeHtml(vr)}</strong></div>
+        </li>
       `;
     }
 
@@ -356,29 +353,34 @@ function createVerbCard(v, idx) {
     const explanation = vr.explanation || '';
     const prepsArr = Array.isArray(vr.prepositions) ? vr.prepositions : [];
     const derivedArr = Array.isArray(vr.derived) ? vr.derived : [];
-    const exArr = Array.isArray(vr.examples)
-      ? vr.examples
-      : (vr.examples ? [String(vr.examples)] : []);
+    const exArr = Array.isArray(vr.examples) ? vr.examples : (vr.examples ? [String(vr.examples)] : []);
+
+    const prepsHtml = prepsArr.length
+      ? prepsArr.map(p => `<span class="prep-badge">${escapeHtml(p)}</span>`).join(' ')
+      : '';
+
+    const varietyDerivedHtml = derivedArr.length
+      ? `<div class="variant-preps"><strong>Derived:</strong> ${escapeHtml(derivedArr.join(' | '))}</div>`
+      : '';
+
+    const examplesHtml = exArr.length
+      ? `<ul class="examples-list">
+          ${exArr.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
+        </ul>`
+      : '';
 
     return `
-      <div class="variety-block">
-        <div class="variety-title">${escapeHtml(title)}</div>
+      <li>
+        <div><strong>${escapeHtml(title)}</strong></div>
 
-        ${(prepsArr.length || derivedArr.length) ? `
-          <div class="variety-meta">
-            ${prepsArr.length ? `<span class="meta-chip">Prep: ${escapeHtml(prepsArr.join(', '))}</span>` : ''}
-            ${derivedArr.length ? `<span class="meta-chip">Derived: ${escapeHtml(derivedArr.join(' | '))}</span>` : ''}
-          </div>
-        ` : ''}
+        ${prepsHtml ? `<div class="variant-preps">${prepsHtml}</div>` : ''}
 
-        ${explanation ? `<div class="variety-expl">${escapeHtml(explanation)}</div>` : ''}
+        ${varietyDerivedHtml}
 
-        ${exArr.length ? `
-          <ul class="variety-examples">
-            ${exArr.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
-          </ul>
-        ` : ''}
-      </div>
+        ${explanation ? `<div class="variant-example">${escapeHtml(explanation)}</div>` : ''}
+
+        ${examplesHtml}
+      </li>
     `;
   }).join('');
 
@@ -386,7 +388,7 @@ function createVerbCard(v, idx) {
     <div class="verb-header">
       <div>
         <div class="verb-base">${escapeHtml(displayBase)}</div>
-        <div class="verb-sub">${escapeHtml(infinitive)}</div>
+        <div class="conjugation">${escapeHtml(infinitive)}</div>
         ${typeText ? `<div class="reflexive-marker">${escapeHtml(typeText)}</div>` : ''}
       </div>
 
@@ -398,40 +400,40 @@ function createVerbCard(v, idx) {
         aria-label="Save">♡</button>
     </div>
 
+    <div class="verb-forms">
+      <div class="form-item">
+        <span class="form-label">Present</span>
+        <span class="form-value">${escapeHtml(forms.present)}</span>
+      </div>
+      <div class="form-item">
+        <span class="form-label">Past</span>
+        <span class="form-value">${escapeHtml(forms.past)}</span>
+      </div>
+      <div class="form-item" style="grid-column:1/-1;">
+        <span class="form-label">Partizip II${forms.aux ? ` (${escapeHtml(forms.aux)})` : ''}</span>
+        <span class="form-value">${escapeHtml(forms.partizip2)}</span>
+      </div>
+    </div>
+
     ${translations.length ? `
       <div class="verb-info">
-        <span class="label">Translation</span>
+        <span class="label">Translation:</span>
         <span class="value">${escapeHtml(translations.join(', '))}</span>
       </div>` : ''}
 
     ${derivedText ? `
       <div class="verb-info">
-        <span class="label">Derived</span>
+        <span class="label">Derived:</span>
         <span class="value">${escapeHtml(derivedText)}</span>
       </div>` : ''}
 
-    <div class="forms-section">
-      <div class="section-title">Forms</div>
-      <div class="verb-forms">
-        <div class="form-item">
-          <span class="form-label">Present</span>
-          <span class="form-value">${escapeHtml(forms.present)}</span>
-        </div>
-        <div class="form-item">
-          <span class="form-label">Past</span>
-          <span class="form-value">${escapeHtml(forms.past)}</span>
-        </div>
-        <div class="form-item" style="grid-column:1/-1;">
-          <span class="form-label">Partizip II${forms.aux ? ` (${escapeHtml(forms.aux)})` : ''}</span>
-          <span class="form-value">${escapeHtml(forms.partizip2)}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="usage-section">
-      <div class="section-title">Varieties</div>
-      ${varietiesHtml || `<div style="opacity:.7;font-weight:800;">No varieties listed for this verb yet.</div>`}
-    </div>
+    ${variants.length ? `
+      <div class="variants-section">
+        <h4>Varieties</h4>
+        <ul class="variants-list">
+          ${varietiesHtml}
+        </ul>
+      </div>` : ''}
   `;
 
   // Wire save button via SharedApp (unchanged)
@@ -451,6 +453,8 @@ function createVerbCard(v, idx) {
 
   return card;
 }
+
+
 
 
 /* ========================= Drawer ========================= */
