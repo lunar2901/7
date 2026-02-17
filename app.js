@@ -15,19 +15,138 @@ let focusApi = null;
 // Saved words via shared.js
 const { getSaved, setSaved, setSaveBtnState, wireSaveButtons, initSearchModal, registerPageItems } = window.SharedApp;
 
-// Build page items for global search
+/* ========================= Styles (MUST be defined before first render) ========================= */
+
+let __verbCardStylesInjected = false;
+
+function injectVerbCardStylesOnce() {
+  if (__verbCardStylesInjected) return;
+  __verbCardStylesInjected = true;
+
+  const css = `
+  .verb-card{
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:16px;
+    padding:14px;
+    background:#fff;
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+  }
+
+  .verb-header{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .verb-base{ font-size:22px; font-weight:800; letter-spacing:.2px; }
+  .reflexive-marker{ font-size:12px; opacity:.7; margin-top:2px; }
+
+  .verb-info{ margin-top:10px; display:flex; gap:8px; align-items:flex-start; }
+  .verb-info .label{ font-size:12px; opacity:.7; min-width:86px; }
+  .verb-info .value{ font-size:13px; font-weight:600; }
+
+  .pill-row{ margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
+  .pill{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:5px 10px;
+    border-radius:999px;
+    background:rgba(0,0,0,.05);
+    font-size:12px;
+    font-weight:800;
+  }
+
+  .tabbar{ margin-top:12px; display:flex; gap:8px; }
+  .tab-btn{
+    border:1px solid rgba(0,0,0,.12);
+    background:#fff;
+    border-radius:999px;
+    padding:6px 10px;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+    user-select:none;
+  }
+  .tab-btn.active{ background:rgba(0,0,0,.06); }
+  .tab-panel{ margin-top:12px; }
+  .tab-panel[hidden]{ display:none !important; }
+
+  .verb-forms{
+    margin-top:2px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .form-item{ background:rgba(0,0,0,.03); border-radius:12px; padding:8px 10px; }
+  .form-label{ display:block; font-size:11px; opacity:.65; margin-bottom:2px; }
+  .form-value{ font-weight:800; }
+
+  .section-title{
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.3px;
+    text-transform:uppercase;
+    opacity:.7;
+    margin:4px 0 10px;
+  }
+
+  details.variety{
+    border:1px solid rgba(0,0,0,.10);
+    border-radius:14px;
+    padding:8px 10px;
+    background:rgba(0,0,0,.02);
+    margin-bottom:10px;
+  }
+  details.variety summary{
+    cursor:pointer;
+    font-weight:900;
+    font-size:13px;
+    list-style:none;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  details.variety summary::-webkit-details-marker{ display:none; }
+
+  .variety-meta{ margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
+  .meta-chip{
+    background:rgba(0,0,0,.05);
+    border-radius:999px;
+    padding:4px 8px;
+    font-size:12px;
+    font-weight:800;
+  }
+  .variety-expl{ margin-top:8px; font-size:13px; opacity:.9; }
+  .variety-examples{ margin:10px 0 0; padding-left:18px; }
+  .variety-examples li{ margin:6px 0; }
+
+  .save-btn{
+    border:1px solid rgba(0,0,0,.12);
+    background:#fff;
+    border-radius:999px;
+    padding:6px 10px;
+    cursor:pointer;
+    font-weight:900;
+    user-select:none;
+  }
+  `;
+
+  const style = document.createElement('style');
+  style.setAttribute('data-verb-card-styles', '1');
+  style.textContent = css;
+  document.head.appendChild(style);
+}
+
+/* ========================= Build page items for global search ========================= */
+
 function buildPageItems(level) {
   const list = verbsDB[level] || [];
   return list.map((v, i) => ({
     id: `verbs:${level}:${getVerbBase(v)}`,
     label: getVerbBase(v),
-    translation: getTranslations(v).slice(0,2).join(', '),
+    translation: getTranslations(v).slice(0, 2).join(', '),
     index: i,
     level,
   }));
 }
 
-// Init
+/* ========================= Init ========================= */
+
 renderCurrent();
 updateCounts();
 buildAllDropdowns();
@@ -151,10 +270,12 @@ function getForms(v) {
   if ((!p || p === '—') && line && typeof line === 'string') {
     const parts = line.split(',').map(s => s.trim()).filter(Boolean);
     if (parts.length >= 2) {
-      p = parts[0] || p; pa = parts[1] || pa;
+      p = parts[0] || p;
+      pa = parts[1] || pa;
       if (parts[2]) {
         const m = parts[2].match(/^(hat|habe|haben|ist|bin|bist|sind|seid)\s+(.+)$/i);
-        if (m) { a = a || m[1]; pp = pp || m[2]; } else { pp = pp || parts[2]; }
+        if (m) { a = a || m[1]; pp = pp || m[2]; }
+        else { pp = pp || parts[2]; }
       }
     }
   }
@@ -176,20 +297,6 @@ function getTranslations(v) {
   return [];
 }
 
-function getExamples(v) {
-  const out = [];
-  const ex = v.examples ?? v.sentences ?? v.example ?? v.usage;
-  if (Array.isArray(ex)) out.push(...ex.map(asText).filter(Boolean));
-  else if (isNonEmptyString(ex)) out.push(ex);
-  if (Array.isArray(v.varieties)) {
-    v.varieties.forEach(vr => {
-      if (Array.isArray(vr.examples)) out.push(...vr.examples.map(asText).filter(Boolean));
-      else if (isNonEmptyString(vr.examples)) out.push(vr.examples);
-    });
-  }
-  return out;
-}
-
 function getVariants(v) {
   const va = v.variants ?? v.variant ?? v.alternatives ?? v.varieties;
   if (Array.isArray(va)) return va;
@@ -204,9 +311,11 @@ function asText(x) {
   return '';
 }
 
-function isNonEmptyString(x) { return typeof x === 'string' && x.trim().length > 0; }
+function isNonEmptyString(x) {
+  return typeof x === 'string' && x.trim().length > 0;
+}
 
-/* ========================= Card renderer ========================= */
+/* ========================= Card renderer (Tabs + Collapsible varieties) ========================= */
 
 function createVerbCard(v, idx) {
   injectVerbCardStylesOnce();
@@ -221,9 +330,10 @@ function createVerbCard(v, idx) {
   const translations = getTranslations(v);
   const variants = getVariants(v);
 
+  // Main derived forms for the base verb (if present in DB)
   const mainDerived = Array.isArray(v.derived) ? v.derived : [];
 
-  // Build varieties HTML (collapsible)
+  // Collapsible varieties (each includes its own examples)
   const varietiesHtml = (Array.isArray(variants) ? variants : []).map((vr) => {
     if (typeof vr === 'string') {
       return `
@@ -235,8 +345,14 @@ function createVerbCard(v, idx) {
 
     const title = vr.variant || vr.name || vr.text || 'Usage';
     const explanation = vr.explanation || '';
+
+    // Prepositions per variety (array in your DB)
     const prepsArr = Array.isArray(vr.prepositions) ? vr.prepositions : [];
+
+    // Derived per variety (separable forms etc., if present)
     const derivedArr = Array.isArray(vr.derived) ? vr.derived : [];
+
+    // Examples per variety (array in your DB)
     const exArr = Array.isArray(vr.examples)
       ? vr.examples
       : (vr.examples ? [String(vr.examples)] : []);
@@ -250,9 +366,7 @@ function createVerbCard(v, idx) {
         <summary><span>${escapeHtml(title)}</span><span>▾</span></summary>
 
         ${metaBits.length ? `<div class="variety-meta">${metaBits.join('')}</div>` : ''}
-
         ${explanation ? `<div class="variety-expl">${escapeHtml(explanation)}</div>` : ''}
-
         ${exArr.length ? `
           <ul class="variety-examples">
             ${exArr.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
@@ -260,12 +374,6 @@ function createVerbCard(v, idx) {
       </details>
     `;
   }).join('');
-
-  // If no varieties, optionally show general examples inside Usage tab (rare fallback)
-  const fallbackExamples = Array.isArray(v.examples) ? v.examples : [];
-  const fallbackUsageHtml = (!variants?.length && fallbackExamples.length)
-    ? `<div class="section-title">Examples</div><ul class="variety-examples">${fallbackExamples.map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}</ul>`
-    : '';
 
   card.innerHTML = `
     <div class="verb-header">
@@ -289,7 +397,7 @@ function createVerbCard(v, idx) {
       </div>` : ''}
 
     ${mainDerived.length ? `
-      <div class="pill-row">
+      <div class="pill-row" aria-label="Derived forms">
         ${mainDerived.map(x => `<span class="pill">${escapeHtml(x)}</span>`).join('')}
       </div>` : ''}
 
@@ -317,8 +425,7 @@ function createVerbCard(v, idx) {
 
     <div class="tab-panel" data-panel="usage" hidden>
       <div class="section-title">Varieties</div>
-      ${varietiesHtml || `<div style="opacity:.7;font-weight:700;">No varieties listed for this verb yet.</div>`}
-      ${fallbackUsageHtml}
+      ${varietiesHtml || `<div style="opacity:.7;font-weight:800;">No varieties listed for this verb yet.</div>`}
     </div>
   `;
 
@@ -339,7 +446,7 @@ function createVerbCard(v, idx) {
     });
   });
 
-  // Wire save button via SharedApp (same as your current code)
+  // Wire save button via SharedApp (unchanged)
   const btn = card.querySelector('.save-btn');
   if (btn) {
     setSaveBtnState(btn, getSaved().has(saveId));
@@ -347,16 +454,15 @@ function createVerbCard(v, idx) {
       const s = getSaved();
       const m = window.SharedApp.getMeta();
       if (s.has(saveId)) { s.delete(saveId); delete m[saveId]; }
-      else { s.add(saveId); m[saveId] = { label: base, translation: translations[0]||'', url: 'index.html' }; }
-      setSaved(s); window.SharedApp.setMeta(m);
+      else { s.add(saveId); m[saveId] = { label: base, translation: translations[0] || '', url: 'index.html' }; }
+      setSaved(s);
+      window.SharedApp.setMeta(m);
       setSaveBtnState(btn, s.has(saveId));
     });
   }
 
   return card;
 }
-
-
 
 /* ========================= Drawer ========================= */
 
@@ -397,98 +503,12 @@ function updateCounts() {
     if (badge) badge.textContent = (verbsDB[level] || []).length;
   });
 }
-let __verbCardStylesInjected = false;
-
-function injectVerbCardStylesOnce() {
-  if (__verbCardStylesInjected) return;
-  __verbCardStylesInjected = true;
-
-  const css = `
-  .verb-card{
-    border:1px solid rgba(0,0,0,.08);
-    border-radius:16px;
-    padding:14px;
-    background:#fff;
-    box-shadow:0 6px 18px rgba(0,0,0,.06);
-  }
-  .verb-header{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
-  .verb-base{ font-size:22px; font-weight:800; letter-spacing:.2px; }
-  .reflexive-marker{ font-size:12px; opacity:.7; margin-top:2px; }
-  .verb-forms{ margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .form-item{ background:rgba(0,0,0,.03); border-radius:12px; padding:8px 10px; }
-  .form-label{ display:block; font-size:11px; opacity:.65; margin-bottom:2px; }
-  .form-value{ font-weight:700; }
-
-  .verb-info{ margin-top:10px; display:flex; gap:8px; align-items:flex-start; }
-  .verb-info .label{ font-size:12px; opacity:.7; min-width:86px; }
-  .verb-info .value{ font-size:13px; font-weight:600; }
-
-  .pill-row{ margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
-  .pill{ display:inline-flex; align-items:center; gap:6px; padding:5px 10px;
-    border-radius:999px; background:rgba(0,0,0,.05); font-size:12px; font-weight:700; }
-
-  .tabbar{ margin-top:12px; display:flex; gap:8px; }
-  .tab-btn{
-    border:1px solid rgba(0,0,0,.12);
-    background:#fff;
-    border-radius:999px;
-    padding:6px 10px;
-    font-size:12px;
-    font-weight:800;
-    cursor:pointer;
-  }
-  .tab-btn.active{ background:rgba(0,0,0,.06); }
-  .tab-panel{ margin-top:12px; }
-  .tab-panel[hidden]{ display:none !important; }
-
-  .section-title{ font-size:12px; font-weight:900; letter-spacing:.3px; text-transform:uppercase; opacity:.7; margin:4px 0 10px; }
-
-  details.variety{
-    border:1px solid rgba(0,0,0,.10);
-    border-radius:14px;
-    padding:8px 10px;
-    background:rgba(0,0,0,.02);
-    margin-bottom:10px;
-  }
-  details.variety summary{
-    cursor:pointer;
-    font-weight:900;
-    font-size:13px;
-    list-style:none;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-  }
-  details.variety summary::-webkit-details-marker{ display:none; }
-  .variety-meta{ margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
-  .meta-chip{
-    background:rgba(0,0,0,.05);
-    border-radius:999px;
-    padding:4px 8px;
-    font-size:12px;
-    font-weight:700;
-  }
-  .variety-expl{ margin-top:8px; font-size:13px; opacity:.9; }
-  .variety-examples{ margin:10px 0 0; padding-left:18px; }
-  .variety-examples li{ margin:6px 0; }
-
-  .save-btn{
-    border:1px solid rgba(0,0,0,.12);
-    background:#fff;
-    border-radius:999px;
-    padding:6px 10px;
-    cursor:pointer;
-    font-weight:800;
-  }
-  `;
-
-  const style = document.createElement('style');
-  style.setAttribute('data-verb-card-styles', '1');
-  style.textContent = css;
-  document.head.appendChild(style);
-}
 
 function escapeHtml(s) {
-  return String(s ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+  return String(s ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
 }
